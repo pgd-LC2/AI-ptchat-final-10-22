@@ -1,0 +1,154 @@
+/* Highlight.js 样式 - 深色主题 */
+@import 'highlight.js/styles/vs2015.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --font-inter: 'Inter', sans-serif;
+  --font-jetbrains-mono: 'JetBrains Mono', monospace;
+}
+
+body {
+  @apply bg-dark-bg-end font-sans text-gray-200;
+}
+
+.glass-card {
+  @apply bg-white/5 backdrop-blur-lg border border-white/10;
+}
+
+.ring-neon-purple {
+  @apply ring-1 ring-neon-purple/50 shadow-neon-purple;
+}
+.ring-neon-cyan {
+  @apply ring-1 ring-neon-cyan/50 shadow-neon-cyan;
+}
+.ring-neon-pink {
+  @apply ring-1 ring-neon-pink/50 shadow-neon-pink;
+}
+
+/* Auto Provider 彩色流转动画 */
+@keyframes rainbow-flow {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.rainbow-gradient {
+  background: linear-gradient(135deg, #7c3aed, #22d3ee, #f472b6, #FBBF24, #4ade80, #7c3aed);
+  background-size: 200% 200%;
+  animation: rainbow-flow 3s ease-in-out infinite;
+}
+
+/* 自定义代码高亮样式，覆盖默认主题 */
+.hljs {
+  background: transparent !important;
+  color: #e5e7eb !important;
+}
+
+.hljs-keyword {
+  color: #c792ea !important;
+}
+
+.hljs-string {
+  color: #c3e88d !important;
+}
+
+.hljs-number {
+  color: #f78c6c !important;
+}
+
+.hljs-function {
+  color: #82aaff !important;
+}
+
+.hljs-comment {
+  color: #676e95 !important;
+  font-style: italic;
+}
+
+.hljs-built_in {
+  color: #ffcb6b !important;
+}
+
+.hljs-class {
+  color: #ffcb6b !important;
+}
+
+.hljs-variable {
+  color: #f07178 !important;
+}
+
+.hljs-operator {
+  color: #89ddff !important;
+}
+
+.hljs-punctuation {
+  color: #89ddff !important;
+}
+
+/* 动态颜色滚动条样式 - 根据当前模型主色调变化 */
+.dynamic-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.dynamic-scrollbar::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 3px;
+}
+
+.dynamic-scrollbar::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-color, #7C3AED);
+  opacity: 0.6;
+  border-radius: 3px;
+  transition: all 0.3s ease;
+}
+
+.dynamic-scrollbar::-webkit-scrollbar-thumb:hover {
+  opacity: 0.8;
+  box-shadow: 0 0 10px color-mix(in srgb, var(--scrollbar-color, #7C3AED) 50%, transparent);
+}
+
+.dynamic-scrollbar::-webkit-scrollbar-thumb:active {
+  opacity: 1;
+}
+
+/* Firefox 滚动条样式 */
+.dynamic-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in srgb, var(--scrollbar-color, #7C3AED) 60%, transparent) rgba(255, 255, 255, 0.05);
+}
+
+/* 天气面板滚动条样式 */
+.weather-scrollbar::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.weather-scrollbar::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 3px;
+}
+
+.weather-scrollbar::-webkit-scrollbar-thumb {
+  background: #22D3EE;
+  opacity: 0.6;
+  border-radius: 3px;
+  transition: all 0.3s ease;
+}
+
+.weather-scrollbar::-webkit-scrollbar-thumb:hover {
+  opacity: 0.8;
+  box-shadow: 0 0 10px rgba(34, 211, 238, 0.5);
+}
+
+.weather-scrollbar::-webkit-scrollbar-thumb:active {
+  opacity: 1;
+}
+
+/* Firefox 滚动条样式 */
+.weather-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(34, 211, 238, 0.6) rgba(255, 255, 255, 0.05);
+}
