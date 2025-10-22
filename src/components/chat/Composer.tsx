@@ -156,10 +156,11 @@ const Composer: React.FC<ComposerProps> = ({ globalMousePosition, isMouseInChatA
   }, [input]);
 
   return (
-    <div className="px-6 pb-6">
-      <div 
+    <div className="px-6 pb-6" style={{ backgroundColor: 'rgba(255,0,0,0.1)', border: '2px solid red' }}>
+      <div
         className="w-full max-w-4xl mx-auto relative"
         ref={containerRef}
+        style={{ backgroundColor: 'rgba(0,255,0,0.1)', border: '2px solid green' }}
       >
         <div 
           className={cn(
