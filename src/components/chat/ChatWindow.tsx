@@ -24,8 +24,9 @@ const ChatWindow: React.FC = () => {
   };
 
   useEffect(() => {
-    if (shouldAutoScrollRef.current) {
-      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    if (shouldAutoScrollRef.current && containerRef.current) {
+      // 使用 scrollTop 而不是 scrollIntoView，避免影响外部容器
+      containerRef.current.scrollTop = containerRef.current.scrollHeight;
     }
   }, [currentConversation?.messages]);
 

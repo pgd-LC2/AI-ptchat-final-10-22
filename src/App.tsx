@@ -12,14 +12,15 @@ import { ThemeProvider } from './lib/ThemeProvider';
 
 const ChatApp: React.FC = () => {
   return (
-    <motion.main 
+    <motion.main
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.4 }}
       className="h-screen w-screen bg-dark-bg-end flex overflow-hidden"
+      style={{ position: 'fixed', top: 0, left: 0, border: '5px solid orange' }}
     >
       <Particles />
-      <div className="relative flex w-full h-full">
+      <div className="relative flex w-full h-full" style={{ border: '5px solid cyan' }}>
         <Sidebar />
         <ChatView />
       </div>
