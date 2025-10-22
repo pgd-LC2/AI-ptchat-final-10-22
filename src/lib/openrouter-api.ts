@@ -423,8 +423,8 @@ export async function getModelsByProvider(): Promise<ProviderModels> {
 
       // 根据模型ID分类到不同提供商
       if (modelId.startsWith('anthropic/')) {
-        // 只包含主要的Anthropic模型
-        if (modelId.includes('claude')) {
+        // 只包含主要的Anthropic模型，排除Opus系列
+        if (modelId.includes('claude') && !modelId.includes('opus')) {
           groupedModels.anthropic.push({
             id: model.id,
             label: cleanModelName(model.name || model.id, 'anthropic'),
