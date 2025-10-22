@@ -80,11 +80,17 @@ const ChatView: React.FC = () => {
 
   const providerText = getProviderText();
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    const rect = e.currentTarget.getBoundingClientRect();
-    const x = ((e.clientX - rect.left) / rect.width) * 100;
+    if (!containerRef.current) return;
+
+    // 获取容器的原始尺寸（不受transform影响）
+    const rect = containerRef.current.getBoundingClientRect();
+
+    // 计算时补偿拖拽偏移量
+    const adjustedX = e.clientX - dragOffset;
+    const x = ((adjustedX - rect.left) / rect.width) * 100;
     const y = ((e.clientY - rect.top) / rect.height) * 100;
     setMousePosition({ x, y });
-    
+
     // 设置全局鼠标位置（相对于视口）
     setGlobalMousePosition({ x: e.clientX, y: e.clientY });
   };
