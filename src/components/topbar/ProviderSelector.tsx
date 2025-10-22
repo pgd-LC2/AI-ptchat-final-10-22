@@ -183,9 +183,12 @@ const ProviderSelector: React.FC = () => {
 function getFallbackModels(providerId: string) {
   const fallbackModels: { [key: string]: Array<{ id: string; label: string }> } = {
     openai: [
-      { id: 'openai/gpt-4o', label: 'GPT-4o' },
-      { id: 'openai/gpt-4o-mini', label: 'GPT-4o Mini' },
-      { id: 'openai/gpt-3.5-turbo', label: 'GPT-3.5 Turbo' }
+      { id: 'openai/gpt-5-image', label: 'GPT-5 Image' },
+      { id: 'openai/gpt-5', label: 'GPT-5' },
+      { id: 'openai/gpt-5-codex', label: 'GPT-5 Codex' },
+      { id: 'openai/o3-deep-research', label: 'O3 Deep Research' },
+      { id: 'openai/o4-mini-deep-research', label: 'O4 Mini Deep Research' },
+      { id: 'openai/gpt-5-image-mini', label: 'GPT-5 Image Mini' }
     ],
     anthropic: [
       { id: 'anthropic/claude-3.5-sonnet', label: 'Claude 3.5 Sonnet' },

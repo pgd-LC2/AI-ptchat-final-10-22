@@ -334,13 +334,13 @@ export async function getModelsByProvider(): Promise<ProviderModels> {
 
     const data = await response.json();
     const models: OpenRouterModel[] = data.data || [];
-    
+
     console.log(`✅ Fetched ${models.length} models from OpenRouter API`);
 
     // 清理模型名称，移除重复的提供商前缀
     const cleanModelName = (name: string, providerId: string): string => {
       if (!name) return '';
-      
+
       // 提供商名称映射
       const providerNames: Record<'openai' | 'anthropic' | 'google' | 'deepseek', string[]> = {
         openai: ['OpenAI', 'GPT'],
@@ -348,12 +348,12 @@ export async function getModelsByProvider(): Promise<ProviderModels> {
         google: ['Google', 'Gemini'],
         deepseek: ['DeepSeek'],
       };
-      
+
       const isKnownProvider = (id: string): id is keyof typeof providerNames =>
         Object.prototype.hasOwnProperty.call(providerNames, id);
-      
+
       let cleanedName = name;
-      
+
       // 移除重复的提供商名称前缀
       if (isKnownProvider(providerId)) {
         providerNames[providerId].forEach((prefix) => {
@@ -364,7 +364,7 @@ export async function getModelsByProvider(): Promise<ProviderModels> {
             const pattern2 = new RegExp(`^${prefix}\\s+${prefix}\\s+(.+)`, 'i');
             const pattern3 = new RegExp(`^${prefix}:\\s*(.+)`, 'i');
             const pattern4 = new RegExp(`^${prefix}\\s+(.+)`, 'i');
-            
+
             // 优先处理重复模式，提取后面的部分
             if (pattern1.test(cleanedName)) {
               cleanedName = cleanedName.replace(pattern1, '$1');
@@ -384,7 +384,7 @@ export async function getModelsByProvider(): Promise<ProviderModels> {
             const pattern1 = new RegExp(`^${prefix}:\\s*${prefix}\\s+`, 'i');
             const pattern2 = new RegExp(`^${prefix}\\s+${prefix}\\s+`, 'i');
             const pattern3 = new RegExp(`^${prefix}:\\s*`, 'i');
-          
+
             cleanedName = cleanedName
               .replace(pattern1, `${prefix} `)
               .replace(pattern2, `${prefix} `)
@@ -392,20 +392,27 @@ export async function getModelsByProvider(): Promise<ProviderModels> {
           }
         });
       }
-      
+
       return cleanedName.trim();
     };
     // 按提供商分组模型
     const groupedModels: ProviderModels = {
       auto: [
-        { 
-          id: 'openrouter/auto', 
-          label: '智能路由', 
+        {
+          id: 'openrouter/auto',
+          label: '智能路由',
           description: '自动选择最适合的模型处理您的请求',
-          created: Date.now() // 设为当前时间，确保排在前面
+          created: Date.now()
         }
       ],
-      openai: [],
+      openai: [
+        { id: 'openai/gpt-5-image', label: 'GPT-5 Image', description: 'GPT-5 图像生成模型', created: Date.now() },
+        { id: 'openai/gpt-5', label: 'GPT-5', description: 'GPT-5 主模型', created: Date.now() },
+        { id: 'openai/gpt-5-codex', label: 'GPT-5 Codex', description: 'GPT-5 代码专用模型', created: Date.now() },
+        { id: 'openai/o3-deep-research', label: 'O3 Deep Research', description: 'O3 深度研究模型', created: Date.now() },
+        { id: 'openai/o4-mini-deep-research', label: 'O4 Mini Deep Research', description: 'O4 Mini 深度研究模型', created: Date.now() },
+        { id: 'openai/gpt-5-image-mini', label: 'GPT-5 Image Mini', description: 'GPT-5 轻量图像生成模型', created: Date.now() }
+      ],
       anthropic: [],
       google: [],
       deepseek: []
@@ -413,20 +420,9 @@ export async function getModelsByProvider(): Promise<ProviderModels> {
 
     models.forEach(model => {
       const modelId = model.id.toLowerCase();
-      
+
       // 根据模型ID分类到不同提供商
-      if (modelId.startsWith('openai/')) {
-        // 只包含主要的OpenAI模型
-        if (modelId.includes('gpt-4') || modelId.includes('gpt-3.5') || modelId.includes('gpt-5')) {
-          groupedModels.openai.push({
-            id: model.id,
-            label: cleanModelName(model.name || model.id, 'openai'),
-            description: model.description,
-            pricing: model.pricing,
-            created: model.created || 0
-          });
-        }
-      } else if (modelId.startsWith('anthropic/')) {
+      if (modelId.startsWith('anthropic/')) {
         // 只包含主要的Anthropic模型
         if (modelId.includes('claude')) {
           groupedModels.anthropic.push({
@@ -466,11 +462,11 @@ export async function getModelsByProvider(): Promise<ProviderModels> {
         groupedModels[provider] = [...entries].sort((a, b) => a.label.localeCompare(b.label));
         return;
       }
-      
-      if (provider === 'auto') {
+
+      if (provider === 'auto' || provider === 'openai') {
         return;
       }
-      
+
       groupedModels[provider] = [...entries]
         .sort((a, b) => ((b.created ?? 0) - (a.created ?? 0)))
         .slice(0, 5);
@@ -486,16 +482,19 @@ export async function getModelsByProvider(): Promise<ProviderModels> {
     return groupedModels;
   } catch (error) {
     console.error('❌ Error fetching models from OpenRouter:', error);
-    
+
     // 返回后备的固定模型列表
     return {
       auto: [
         { id: 'openrouter/auto', label: '智能路由' }
       ],
       openai: [
-        { id: 'openai/gpt-4o', label: 'GPT-4o' },
-        { id: 'openai/gpt-4o-mini', label: 'GPT-4o Mini' },
-        { id: 'openai/gpt-3.5-turbo', label: 'GPT-3.5 Turbo' }
+        { id: 'openai/gpt-5-image', label: 'GPT-5 Image' },
+        { id: 'openai/gpt-5', label: 'GPT-5' },
+        { id: 'openai/gpt-5-codex', label: 'GPT-5 Codex' },
+        { id: 'openai/o3-deep-research', label: 'O3 Deep Research' },
+        { id: 'openai/o4-mini-deep-research', label: 'O4 Mini Deep Research' },
+        { id: 'openai/gpt-5-image-mini', label: 'GPT-5 Image Mini' }
       ],
       anthropic: [
         { id: 'anthropic/claude-3.5-sonnet', label: 'Claude 3.5 Sonnet' },
