@@ -160,9 +160,10 @@ const ChatView: React.FC = () => {
   }, [isDragging, dragOffset, dragStartX]);
 
   return (
-    <div 
+    <div
       ref={containerRef}
-      className="flex flex-1 h-full relative overflow-hidden"
+      className="flex flex-1 relative overflow-hidden"
+      style={{ height: '100vh' }}
       onMouseMove={handleMouseMove}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
@@ -248,7 +249,7 @@ const ChatView: React.FC = () => {
       )}
 
         {activeConversationId && conversation ? (
-          <div className="relative z-10 flex flex-col flex-1 h-full" style={{ border: '3px solid blue' }}>
+          <div className="absolute inset-0 z-10 flex flex-col" style={{ border: '3px solid blue' }}>
             <Topbar />
             <div className="flex-1 flex flex-col overflow-hidden" style={{ border: '3px solid yellow' }}>
               <ChatWindow />
@@ -258,7 +259,7 @@ const ChatView: React.FC = () => {
             </div>
           </div>
         ) : tempConversation ? (
-          <div className="relative z-10 flex flex-col flex-1 h-full" style={{ border: '3px solid blue' }}>
+          <div className="absolute inset-0 z-10 flex flex-col" style={{ border: '3px solid blue' }}>
             <Topbar />
             <div className="flex-1 flex items-center justify-center text-center p-6">
               <div className="flex flex-col items-center">
