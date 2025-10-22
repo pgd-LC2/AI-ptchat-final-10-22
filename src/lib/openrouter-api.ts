@@ -445,16 +445,35 @@ export async function getModelsByProvider(): Promise<ProviderModels> {
           });
         }
       } else if (modelId.startsWith('deepseek/')) {
-        // 包含所有DeepSeek模型
-        groupedModels.deepseek.push({
-          id: model.id,
-          label: cleanModelName(model.name || model.id, 'deepseek'),
-          description: model.description,
-          pricing: model.pricing,
-          created: model.created || 0
-        });
+        // 包含所有DeepSeek模型，排除特定模型
+        const excludedModels = ['deepseek/deepseek-r1', 'deepseek/deepseek-reasoner', 'qwen/qwen-2.5-coder-32b-instruct'];
+        const shouldExclude = excludedModels.some(excluded => modelId.includes(excluded.toLowerCase())) ||
+                             modelId.includes('0528') ||
+                             modelId.includes('qwen') ||
+                             (modelId.includes('free') && modelId.includes('8b'));
+
+        if (!shouldExclude) {
+          groupedModels.deepseek.push({
+            id: model.id,
+            label: cleanModelName(model.name || model.id, 'deepseek'),
+            description: model.description,
+            pricing: model.pricing,
+            created: model.created || 0
+          });
+        }
       }
     });
+
+    // 确保 deepseek-chat-v3-0324 存在
+    const hasV3Model = groupedModels.deepseek.some(m => m.id === 'deepseek/deepseek-chat-v3-0324');
+    if (!hasV3Model) {
+      groupedModels.deepseek.push({
+        id: 'deepseek/deepseek-chat-v3-0324',
+        label: 'Chat V3 0324',
+        description: 'DeepSeek Chat V3 模型',
+        created: Date.now()
+      });
+    }
 
     // 对不同提供商应用不同的排序和限制策略
     Object.entries(groupedModels).forEach(([provider, entries]) => {
