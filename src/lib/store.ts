@@ -38,8 +38,8 @@ const useChatStore = create<ChatState>()(
       tempConversation: null,
       messageReasoningVisibility: {},
       isStreaming: false,
-      selectedProviderId: 'openai',
-      selectedModelId: 'openai/gpt-4o',
+      selectedProviderId: 'auto',
+      selectedModelId: 'openrouter/auto',
 
       startNewChat: (providerId, modelId) => {
         const id = `conv_${Date.now()}`;
