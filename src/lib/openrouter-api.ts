@@ -464,17 +464,6 @@ export async function getModelsByProvider(): Promise<ProviderModels> {
       }
     });
 
-    // 确保 deepseek-chat-v3-0324 存在
-    const hasV3Model = groupedModels.deepseek.some(m => m.id === 'deepseek/deepseek-chat-v3-0324');
-    if (!hasV3Model) {
-      groupedModels.deepseek.push({
-        id: 'deepseek/deepseek-chat-v3-0324',
-        label: 'Chat V3 0324',
-        description: 'DeepSeek Chat V3 模型',
-        created: Date.now()
-      });
-    }
-
     // 对不同提供商应用不同的排序和限制策略
     Object.entries(groupedModels).forEach(([provider, entries]) => {
       if (provider === 'google') {
@@ -483,6 +472,25 @@ export async function getModelsByProvider(): Promise<ProviderModels> {
       }
 
       if (provider === 'auto' || provider === 'openai') {
+        return;
+      }
+
+      if (provider === 'deepseek') {
+        // DeepSeek特殊处理：前5个从网络加载，第6个固定为v3-0324
+        const sortedEntries = [...entries]
+          .filter(m => m.id !== 'deepseek/deepseek-chat-v3-0324')
+          .sort((a, b) => ((b.created ?? 0) - (a.created ?? 0)))
+          .slice(0, 5);
+
+        // 添加固定的v3-0324模型
+        sortedEntries.push({
+          id: 'deepseek/deepseek-chat-v3-0324',
+          label: 'Chat V3 0324',
+          description: 'DeepSeek Chat V3 模型',
+          created: 0
+        });
+
+        groupedModels[provider] = sortedEntries;
         return;
       }
 
