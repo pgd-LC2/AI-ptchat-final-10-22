@@ -73,11 +73,13 @@ const HomePage: React.FC<HomePageProps> = ({ providerColor }) => {
             onChange={(e) => setInputValue(e.target.value)}
             onKeyDown={handleKeyDown}
             placeholder="输入消息开始对话..."
-            className="flex-1 bg-transparent text-white placeholder-gray-500 outline-none resize-none px-4 py-1.5 max-h-32"
+            className="flex-1 bg-transparent text-white placeholder-gray-500 outline-none resize-none px-4 max-h-32"
             rows={1}
             style={{
               minHeight: '40px',
-              lineHeight: '24px'
+              lineHeight: '40px',
+              paddingTop: '0',
+              paddingBottom: '0'
             }}
             onInput={(e) => {
               const target = e.target as HTMLTextAreaElement;
