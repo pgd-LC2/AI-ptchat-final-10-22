@@ -249,17 +249,17 @@ const ChatView: React.FC = () => {
       )}
 
         {activeConversationId && conversation ? (
-          <div className="absolute inset-0 z-10 flex flex-col" style={{ border: '3px solid blue' }}>
+          <div className="absolute inset-0 z-10 flex flex-col">
             <Topbar />
-            <div className="flex-1 flex flex-col overflow-hidden" style={{ border: '3px solid yellow' }}>
+            <div className="flex-1 flex flex-col overflow-hidden">
               <ChatWindow />
-              <div className="flex-shrink-0" style={{ border: '3px solid purple' }}>
+              <div className="flex-shrink-0">
                 <Composer globalMousePosition={globalMousePosition} isMouseInChatArea={isMouseInside} />
               </div>
             </div>
           </div>
         ) : tempConversation ? (
-          <div className="absolute inset-0 z-10 flex flex-col" style={{ border: '3px solid blue' }}>
+          <div className="absolute inset-0 z-10 flex flex-col">
             <Topbar />
             <div className="flex-1 flex items-center justify-center text-center p-6">
               <div className="flex flex-col items-center">
@@ -279,7 +279,7 @@ const ChatView: React.FC = () => {
                 </p>
               </div>
             </div>
-            <div className="flex-shrink-0" style={{ border: '3px solid purple' }}>
+            <div className="flex-shrink-0">
               <Composer globalMousePosition={globalMousePosition} isMouseInChatArea={isMouseInside} />
             </div>
           </div>
