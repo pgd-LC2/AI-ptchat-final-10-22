@@ -90,8 +90,8 @@ const UserManager: React.FC = () => {
                   <div className="font-medium text-white truncate">
                     {userName}
                   </div>
-                  <div className="text-sm text-gray-400 truncate flex items-center gap-1">
-                    <Mail className="w-4 h-4" />
+                  <div className="text-sm text-gray-400 truncate flex items-center gap-1.5">
+                    <Mail className="w-[1em] h-[1em] flex-shrink-0" />
                     {userEmail}
                   </div>
                 </div>
