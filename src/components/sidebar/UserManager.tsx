@@ -3,9 +3,11 @@ import { User, Settings, LogOut, ChevronUp, Mail } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import useAuthStore from '@/lib/auth-store';
 import { cn } from '@/lib/utils';
+import { useTheme } from '@/lib/ThemeProvider';
 
 const UserManager: React.FC = () => {
   const { user, signOut } = useAuthStore();
+  const { providerColor } = useTheme();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSigningOut, setIsSigningOut] = useState(false);
 
@@ -31,8 +33,16 @@ const UserManager: React.FC = () => {
       >
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3 min-w-0">
-            <div className="w-10 h-10 rounded-full bg-neon-purple/20 flex items-center justify-center flex-shrink-0">
-              <User className="w-5 h-5 text-neon-purple" />
+            <div
+              className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 transition-colors duration-300"
+              style={{
+                backgroundColor: `${providerColor}20`,
+              }}
+            >
+              <User
+                className="w-5 h-5 transition-colors duration-300"
+                style={{ color: providerColor }}
+              />
             </div>
             <div className="text-left min-w-0 flex-1">
               <div className="font-medium text-white truncate text-sm">
@@ -65,8 +75,16 @@ const UserManager: React.FC = () => {
             {/* 用户详细信息 */}
             <div className="p-4 border-b border-white/10">
               <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-full bg-neon-purple/20 flex items-center justify-center">
-                  <User className="w-6 h-6 text-neon-purple" />
+                <div
+                  className="w-12 h-12 rounded-full flex items-center justify-center transition-colors duration-300"
+                  style={{
+                    backgroundColor: `${providerColor}20`,
+                  }}
+                >
+                  <User
+                    className="w-6 h-6 transition-colors duration-300"
+                    style={{ color: providerColor }}
+                  />
                 </div>
                 <div className="min-w-0 flex-1">
                   <div className="font-medium text-white truncate">
