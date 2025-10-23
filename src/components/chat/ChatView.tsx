@@ -107,6 +107,20 @@ const ChatView: React.FC = () => {
   // 拖拽事件处理
   const handleMouseDown = (e: React.MouseEvent) => {
     if (!isHomePage || isWeatherPanelOpen) return;
+
+    // 检查是否点击在可交互元素上
+    const target = e.target as HTMLElement;
+    const isInteractiveElement =
+      target.tagName === 'TEXTAREA' ||
+      target.tagName === 'INPUT' ||
+      target.tagName === 'BUTTON' ||
+      target.closest('textarea') ||
+      target.closest('input') ||
+      target.closest('button');
+
+    // 如果点击的是交互元素，不触发拖拽
+    if (isInteractiveElement) return;
+
     setIsDragging(true);
     setDragStartX(e.clientX);
     e.preventDefault();
