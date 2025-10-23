@@ -91,7 +91,7 @@ const UserManager: React.FC = () => {
                     {userName}
                   </div>
                   <div className="text-sm text-gray-400 truncate flex items-center gap-1">
-                    <Mail className="w-3 h-3" />
+                    <Mail className="w-4 h-4" />
                     {userEmail}
                   </div>
                 </div>
