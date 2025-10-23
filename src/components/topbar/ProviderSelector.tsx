@@ -146,7 +146,9 @@ const ProviderSelector: React.FC = () => {
           onClick={() => handleProviderChange(provider.id)}
           className={cn(
             "flex items-center gap-2 px-3 py-1.5 rounded-md text-sm transition-all duration-500",
-            currentProviderId === provider.id ? 'bg-white/10 text-white' : 'text-gray-400 hover:bg-white/5 hover:text-gray-300',
+            currentProviderId === provider.id
+              ? (provider.id === 'auto' ? 'text-white' : 'bg-white/10 text-white')
+              : 'text-gray-400 hover:bg-white/5 hover:text-gray-300',
           )}
           title={provider.error || `${provider.models.length} models available`}
           style={provider.id === 'auto' && currentProviderId === provider.id ? {
