@@ -197,12 +197,14 @@ const useChatStore = create<ChatState>()(
           if (!conversation) {
             throw new Error('Conversation not found');
           }
-          
-          // 构建消息历史（包括新用户消息）
-          const chatMessages: ChatMessage[] = conversation.messages.map(msg => ({
-            role: msg.role as 'system' | 'user' | 'assistant',
-            content: msg.content,
-          }));
+
+          // 构建消息历史（排除刚添加的助手空消息）
+          const chatMessages: ChatMessage[] = conversation.messages
+            .filter(msg => !(msg.role === 'assistant' && msg.content === ''))
+            .map(msg => ({
+              role: msg.role as 'system' | 'user' | 'assistant',
+              content: msg.content,
+            }));
           
           // 获取当前对话的OpenRouter模型名称
           const openRouterModel = getOpenRouterModelName(conversation.providerId, conversation.modelId);
