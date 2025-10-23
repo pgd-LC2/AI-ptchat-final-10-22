@@ -120,7 +120,7 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({ message }) => {
       )}
       <div
         className={cn(
-          "glass-card rounded-2xl px-5 py-3 text-base leading-relaxed",
+          "glass-card rounded-2xl px-4 py-2.5 text-base leading-relaxed min-h-[44px]",
           isUser ? "rounded-br-md" : "rounded-bl-md"
         )}
       >
