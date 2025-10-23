@@ -67,7 +67,7 @@ const HomePage: React.FC<HomePageProps> = ({ providerColor }) => {
 
       {/* 胶囊输入框 */}
       <div className="mt-12 w-full max-w-3xl">
-        <div className="glass-card rounded-full border border-white/10 p-2 pr-3 flex items-center gap-3 hover:border-white/20 transition-all duration-300">
+        <div className="glass-card rounded-full border border-white/10 p-2 pr-2 flex items-center gap-1 hover:border-white/20 transition-all duration-300">
           <textarea
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
