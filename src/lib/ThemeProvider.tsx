@@ -49,7 +49,6 @@ const hexToRgb = (hex: string) => {
 };
 
 export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [dynamicColor, setDynamicColor] = useState(getAutoColor());
   const activeConversationId = useChatStore((state) => state.activeConversationId);
   const conversation = useChatStore((state) => activeConversationId ? state.conversations[activeConversationId] : null);
   const { selectedProviderId } = useChatStore((state) => ({
@@ -57,28 +56,32 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   }));
 
   // Get provider info for active conversation or use selected provider
-  const provider = conversation 
-    ? PROVIDERS.find(p => p.id === conversation.providerId) 
-    : PROVIDERS.find(p => p.id === selectedProviderId) || PROVIDERS[0];
+  const currentProviderId = conversation?.providerId || selectedProviderId;
+  const provider = PROVIDERS.find(p => p.id === currentProviderId);
+
+  // 初始颜色基于当前provider
+  const [dynamicColor, setDynamicColor] = useState(() =>
+    currentProviderId === 'auto' ? getAutoColor() : (provider?.color || '#7C3AED')
+  );
 
   // 为auto提供商设置动态颜色更新
   useEffect(() => {
-    if (provider?.id === 'auto') {
+    if (currentProviderId === 'auto') {
       // 立即设置初始颜色
       setDynamicColor(getAutoColor());
-      
+
       const interval = setInterval(() => {
         setDynamicColor(getAutoColor());
       }, 50); // 每50ms更新一次，确保缓慢渐变依然流畅
       return () => clearInterval(interval);
-    } else {
-      // 非AUTO模式时停止颜色更新
-      setDynamicColor('#7C3AED'); // 重置为默认颜色
+    } else if (provider?.color) {
+      // 非AUTO模式时使用provider的颜色
+      setDynamicColor(provider.color);
     }
-  }, [provider?.id]);
+  }, [currentProviderId, provider?.color]);
 
   // 对于auto提供商，使用动态颜色
-  const providerColor = provider?.id === 'auto' ? dynamicColor : (provider?.color || '#7C3AED');
+  const providerColor = currentProviderId === 'auto' ? dynamicColor : (provider?.color || '#7C3AED');
 
   return (
     <ThemeContext.Provider value={{ providerColor }}>
