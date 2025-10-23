@@ -120,7 +120,7 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({ message }) => {
       )}
       <div
         className={cn(
-          "glass-card rounded-2xl px-4 py-2.5 text-base leading-relaxed min-h-[44px]",
+          "glass-card rounded-2xl px-4 py-3 text-base leading-relaxed min-h-[44px]",
           isUser ? "rounded-br-md" : "rounded-bl-md"
         )}
       >
@@ -140,7 +140,7 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({ message }) => {
                     h1: ({ children }) => <h1 className="text-xl font-bold mb-3 text-white">{children}</h1>,
                     h2: ({ children }) => <h2 className="text-lg font-semibold mb-2 text-white">{children}</h2>,
                     h3: ({ children }) => <h3 className="text-base font-medium mb-2 text-white">{children}</h3>,
-                    p: ({ children }) => <p className="mb-2 text-gray-200 leading-relaxed">{children}</p>,
+                    p: ({ children }) => <p className="mb-0 last:mb-0 [&:not(:last-child)]:mb-3 text-gray-200 leading-relaxed">{children}</p>,
                     ul: ({ children }) => <ul className="list-disc list-inside mb-3 text-gray-200 space-y-1">{children}</ul>,
                     ol: ({ children }) => <ol className="list-decimal list-inside mb-3 text-gray-200 space-y-1">{children}</ol>,
                     li: ({ children }) => <li className="text-gray-200">{children}</li>,
