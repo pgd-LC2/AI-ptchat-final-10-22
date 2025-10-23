@@ -88,7 +88,41 @@ export async function streamChatCompletion(
       temperature: temperature || 0.7,
       max_tokens: maxCompletionTokens, // 使用模型的真实最大完成令牌数
     };
-    
+
+    // 如果是 auto 模型，添加 models 字段指定候选模型
+    if (actualModel === 'openrouter/auto') {
+      requestBody.models = [
+        "openai/gpt-5",
+        "openai/gpt-5-mini",
+        "openai/gpt-5-nano",
+        "openai/gpt-4.1-nano",
+        "openai/gpt-4.1",
+        "openai/gpt-4.1-mini",
+        "openai/gpt-4o-mini",
+        "openai/chatgpt-4o-latest",
+        "anthropic/claude-3.5-haiku",
+        "anthropic/claude-opus-4-1",
+        "anthropic/claude-sonnet-4-0",
+        "anthropic/claude-3-7-sonnet-latest",
+        "google/gemini-2.5-pro",
+        "google/gemini-2.5-flash",
+        "mistral/mistral-large-latest",
+        "mistral/mistral-medium-latest",
+        "mistral/mistral-small-latest",
+        "mistralai/mistral-nemo",
+        "x-ai/grok-3",
+        "x-ai/grok-3-mini",
+        "x-ai/grok-4",
+        "deepseek/deepseek-r1",
+        "meta-llama/llama-3.1-70b-instruct",
+        "meta-llama/llama-3.1-405b-instruct",
+        "mistralai/mixtral-8x22b-instruct",
+        "perplexity/sonar",
+        "cohere/command-r-plus",
+        "cohere/command-r"
+      ];
+    }
+
     // 如果估算的令牌数超过最大上下文长度，启用middle-out转换
     if (estimatedTokens > maxContextLength) {
       requestBody.transforms = ["middle-out"];
@@ -97,12 +131,13 @@ export async function streamChatCompletion(
     
     console.log('Making request to:', functionUrl);
     console.log('Request headers:', { ...headers, 'Authorization': 'Bearer [REDACTED]' });
-    console.log('Request payload:', { 
-      messages: messages.length + ' messages', 
-      model: requestBody.model, 
+    console.log('Request payload:', {
+      messages: messages.length + ' messages',
+      model: requestBody.model,
       temperature: requestBody.temperature,
       max_tokens: `${requestBody.max_tokens} (from API)`,
       transforms: requestBody.transforms || 'none',
+      models: requestBody.models ? `${requestBody.models.length} models` : 'none',
       estimatedTokens,
       maxContextLength: `${maxContextLength} (from API)`
     });
