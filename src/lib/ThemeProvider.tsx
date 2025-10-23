@@ -8,13 +8,13 @@ interface ThemeContextType {
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
-// AUTO渐变色数组
-const AUTO_COLORS = ['#7C3AED', '#22D3EE', '#F472B6', '#FBBF24', '#4ade80'];
+// AUTO渐变色数组 - 深渊蓝黑 → 墨蓝 → 冰青 → 冷紫
+const AUTO_COLORS = ['#0B1220', '#1F3556', '#4CC9E9', '#B7A6F7'];
 
 // 获取当前渐变色 - 改进的颜色插值算法
 const getAutoColor = () => {
   const now = Date.now();
-  const cycle = 5000; // 5秒循环，更平滑
+  const cycle = 20000; // 20秒循环，更缓慢流畅的渐变
   const progress = (now % cycle) / cycle;
   const colorIndex = progress * AUTO_COLORS.length;
   const currentIndex = Math.floor(colorIndex);
@@ -69,7 +69,7 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       
       const interval = setInterval(() => {
         setDynamicColor(getAutoColor());
-      }, 100); // 每100ms更新一次，平衡流畅度和性能
+      }, 50); // 每50ms更新一次，确保缓慢渐变依然流畅
       return () => clearInterval(interval);
     } else {
       // 非AUTO模式时停止颜色更新
