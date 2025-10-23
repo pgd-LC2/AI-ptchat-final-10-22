@@ -32,11 +32,11 @@ const STATIC_PROVIDERS: Omit<LLMProvider, 'models'>[] = [
     Icon: Search, 
     color: '#4ade80' 
   },
-  { 
-    id: 'auto', 
-    name: 'Auto', 
-    Icon: Zap, 
-    color: 'linear-gradient(135deg, #7C3AED 0%, #22D3EE 20%, #F472B6 40%, #FBBF24 60%, #4ade80 80%, #7C3AED 100%)' 
+  {
+    id: 'auto',
+    name: 'Auto',
+    Icon: Zap,
+    color: 'linear-gradient(135deg, #0B1220 0%, #1F3556 33%, #4CC9E9 66%, #B7A6F7 100%)'
   },
 ];
 
@@ -152,7 +152,7 @@ const ProviderSelector: React.FC = () => {
           style={provider.id === 'auto' && currentProviderId === provider.id ? {
             background: provider.color,
             backgroundSize: '200% 200%',
-            animation: 'rainbow-flow 3s ease-in-out infinite'
+            animation: 'rainbow-flow 20s ease-in-out infinite'
           } : provider.id === 'auto' ? {
             background: 'transparent'
           } : {}}

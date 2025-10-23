@@ -36,9 +36,9 @@ body {
 }
 
 .rainbow-gradient {
-  background: linear-gradient(135deg, #7c3aed, #22d3ee, #f472b6, #FBBF24, #4ade80, #7c3aed);
+  background: linear-gradient(135deg, #0B1220, #1F3556, #4CC9E9, #B7A6F7);
   background-size: 200% 200%;
-  animation: rainbow-flow 3s ease-in-out infinite;
+  animation: rainbow-flow 20s ease-in-out infinite;
 }
 
 /* 自定义代码高亮样式，覆盖默认主题 */
