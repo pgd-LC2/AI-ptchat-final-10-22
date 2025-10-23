@@ -8,6 +8,7 @@ import useChatStore from '@/lib/store';
 import NeonCore from '../ui/NeonCore';
 import { useTheme } from '@/lib/ThemeProvider';
 import WeatherPanel from '../weather/WeatherPanel';
+import HomePage from './HomePage';
 
 const ChatView: React.FC = () => {
   const activeConversationId = useChatStore((state) => state.activeConversationId);
@@ -284,49 +285,7 @@ const ChatView: React.FC = () => {
             </div>
           </div>
         ) : (
-          <div className="flex flex-col flex-1 items-center justify-center text-center p-4 relative z-10">
-            <NeonCore providerColor={providerColor} />
-            <h1 className="text-4xl font-bold mt-6 bg-gradient-to-r from-white via-gray-100 to-gray-300 bg-clip-text text-transparent">
-              Orbital Chat
-            </h1>
-            <div className="mt-4 max-w-2xl">
-              <p className="text-xl text-gray-300 mb-3">
-                连接世界顶尖AI大模型的统一平台
-              </p>
-              <p className="text-gray-400 text-base leading-relaxed mb-6">
-                GPT-5、Claude 4 Sonnet、Gemini 2.5 Pro、DeepSeek V3.1 — 
-                在一个界面中体验全球最先进的人工智能，释放无限创造力
-              </p>
-              <div className="flex flex-wrap justify-center gap-4 text-sm text-gray-500">
-                <div className="flex items-center gap-2">
-                  <div className="w-2 h-2 rounded-full bg-neon-purple"></div>
-                  <span>多模型无缝切换</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="w-2 h-2 rounded-full bg-neon-cyan"></div>
-                  <span>实时流式响应</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="w-2 h-2 rounded-full" style={{backgroundColor: '#FBBF24'}}></div>
-                  <span>智能模型路由</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="w-2 h-2 rounded-full bg-neon-pink"></div>
-                  <span>会话历史管理</span>
-                </div>
-              </div>
-            </div>
-            
-            {/* 拖拽提示 */}
-            <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 glass-card px-6 py-3 rounded-full border border-white/10">
-              <div className="flex items-center gap-3 text-sm text-gray-400">
-                <div className="w-6 h-6 rounded-full border-2 border-gray-400 flex items-center justify-center">
-                  <div className="w-1 h-1 bg-gray-400 rounded-full"></div>
-                </div>
-                <span>向左拖拽查看天气</span>
-              </div>
-            </div>
-          </div>
+          <HomePage providerColor={providerColor} />
         )}
       </div>
 
