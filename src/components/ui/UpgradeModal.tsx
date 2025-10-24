@@ -16,7 +16,6 @@ const UpgradeModal: React.FC<UpgradeModalProps> = ({
   isOpen,
   onClose,
   reason = 'limit_reached',
-  limit = 20,
 }) => {
   const navigate = useNavigate();
   const focusRing = 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neon-purple/60 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b1020]';
@@ -32,21 +31,21 @@ const UpgradeModal: React.FC<UpgradeModalProps> = ({
         return {
           icon: <Crown className="w-12 h-12 text-neon-purple" />,
           title: '今日对话次数已达上限',
-          description: `您今天已使用 ${limit} 次对话。升级到专业版或旗舰版，享受更多对话次数和高级功能。`,
+          description: '升级订阅可享受更多的对话次数和高级功能。',
           benefits: [
-            '专业版：每日 500 次对话',
-            '旗舰版：无限次对话',
+            '更多的每日对话次数',
+            '更长的历史记录保存',
             'Auto 智能路由',
-            '访问高级 AI 模型',
+            '访问更多高级 AI 模型',
           ],
         };
       case 'model_locked':
         return {
           icon: <Sparkles className="w-12 h-12 text-neon-cyan" />,
           title: '该模型需要升级订阅',
-          description: '您选择的模型属于高级功能，需要升级到专业版或旗舰版才能使用。',
+          description: '升级订阅可享受更多顶级 AI 模型。',
           benefits: [
-            '访问 GPT-5、Claude 3.5 等顶级模型',
+            '访问更多顶级 AI 模型',
             '体验最新 AI 技术',
             '更快的响应速度',
             '更高的输出质量',
@@ -56,11 +55,11 @@ const UpgradeModal: React.FC<UpgradeModalProps> = ({
         return {
           icon: <Crown className="w-12 h-12 text-neon-pink" />,
           title: '该功能需要升级订阅',
-          description: '您尝试使用的功能属于付费功能，升级订阅后即可解锁。',
+          description: '升级订阅可享受更多高级功能。',
           benefits: [
             'API 访问权限',
             '团队协作功能',
-            '永久历史记录',
+            '更长的历史记录',
             '优先技术支持',
           ],
         };

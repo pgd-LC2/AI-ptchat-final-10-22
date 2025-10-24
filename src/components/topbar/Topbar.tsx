@@ -2,7 +2,6 @@
 import React, { useState } from 'react';
 import ProviderSelector from './ProviderSelector';
 import NeonCore from '../ui/NeonCore';
-import UsageMeter from '../ui/UsageMeter';
 import useChatStore from '@/lib/store';
 import { ChevronDown } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -119,10 +118,7 @@ const Topbar: React.FC = () => {
           </div>
         </div>
       </div>
-      <div className="flex items-center gap-4">
-        <UsageMeter />
-        <ProviderSelector />
-      </div>
+      <ProviderSelector />
     </div>
   );
 };

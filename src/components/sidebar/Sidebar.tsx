@@ -1,14 +1,12 @@
 
 import React, { useState, useRef } from 'react';
-import { MessageSquarePlus, Home, MoveHorizontal as MoreHorizontal, CreditCard as Edit3, Download, Trash2, Crown } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { MessageSquarePlus, Home, MoveHorizontal as MoreHorizontal, CreditCard as Edit3, Download, Trash2 } from 'lucide-react';
 import useChatStore from '@/lib/store';
 import UserManager from './UserManager';
 import { cn } from '@/lib/utils';
 import { useTheme } from '@/lib/ThemeProvider';
 
 const Sidebar: React.FC = () => {
-  const navigate = useNavigate();
   const {
     conversations,
     activeConversationId,
@@ -214,17 +212,6 @@ const Sidebar: React.FC = () => {
           onClick={() => setMenuOpenId(null)} 
         />
       )}
-
-      {/* 升级订阅按钮 */}
-      <button
-        onClick={() => navigate('/pricing')}
-        className="flex items-center justify-between w-full px-3 py-2.5 rounded-lg text-sm font-medium text-white bg-gradient-to-r from-neon-purple to-neon-pink hover:opacity-90 transition-all duration-300 shadow-lg hover:shadow-neon-purple/25"
-      >
-        <span className="flex items-center gap-2">
-          <Crown className="w-4 h-4" />
-          升级订阅
-        </span>
-      </button>
 
       {/* 用户管理 */}
       <div className="mt-4 pt-4 border-t border-white/10">
