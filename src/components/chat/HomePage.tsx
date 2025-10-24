@@ -45,24 +45,6 @@ const HomePage: React.FC<HomePageProps> = ({ providerColor }) => {
           GPT-5、Claude 4 Sonnet、Gemini 2.5 Pro、DeepSeek V3.1 —
           在一个界面中体验全球最先进的人工智能，释放无限创造力
         </p>
-        <div className="flex flex-wrap justify-center gap-4 text-sm text-gray-500">
-          <div className="flex items-center gap-2">
-            <div className="w-2 h-2 rounded-full bg-neon-purple"></div>
-            <span>多模型无缝切换</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-2 h-2 rounded-full bg-neon-cyan"></div>
-            <span>实时流式响应</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-2 h-2 rounded-full" style={{backgroundColor: '#FBBF24'}}></div>
-            <span>智能模型路由</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-2 h-2 rounded-full bg-neon-pink"></div>
-            <span>会话历史管理</span>
-          </div>
-        </div>
       </div>
 
       {/* 胶囊输入框 */}
