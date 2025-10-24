@@ -89,6 +89,17 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({ message }) => {
   const imageList = Array.isArray(message.images) ? message.images : [];
   const hasImages = !isUser && imageList.length > 0;
   const isThinkingOnly = !isUser && hasReasoning && !hasContent && !hasImages;
+  const [copied, setCopied] = React.useState(false);
+
+  const handleCopyMessage = async () => {
+    try {
+      await navigator.clipboard.writeText(message.content || '');
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (err) {
+      console.error('Failed to copy message:', err);
+    }
+  };
 
   const getImageSrc = (rawUrl: string) => {
     if (!rawUrl) return '';
@@ -269,6 +280,33 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({ message }) => {
               <p className="whitespace-pre-wrap">{message.reasoning}</p>
             </div>
           </motion.div>
+        )}
+
+        {hasContent && !isThinkingOnly && (
+          <div className="mt-3 flex items-center justify-end">
+            <button
+              onClick={handleCopyMessage}
+              className={cn(
+                "flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs transition-all duration-200",
+                copied
+                  ? "bg-neon-cyan/20 text-neon-cyan"
+                  : "bg-white/5 text-gray-400 hover:bg-white/10 hover:text-gray-300"
+              )}
+              title="复制消息"
+            >
+              {copied ? (
+                <>
+                  <Check className="w-3 h-3" />
+                  <span>已复制</span>
+                </>
+              ) : (
+                <>
+                  <Copy className="w-3 h-3" />
+                  <span>复制</span>
+                </>
+              )}
+            </button>
+          </div>
         )}
       </div>
       {isUser && (
