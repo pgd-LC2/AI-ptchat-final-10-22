@@ -1,7 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Send, Loader, Plus } from 'lucide-react';
 import useChatStore from '@/lib/store';
-import { cn } from '@/lib/utils';
 import { useTheme } from '@/lib/ThemeProvider';
 
 interface ComposerProps {
@@ -161,16 +160,15 @@ const Composer: React.FC<ComposerProps> = ({ globalMousePosition, isMouseInChatA
         className="w-full max-w-4xl mx-auto relative"
         ref={containerRef}
       >
-        <div 
-          className={cn(
-            "glass-card rounded-2xl transition-all duration-300 relative",
-            isFocused ? "border-2" : "border",
-          )}
+        <div
+          className="glass-card rounded-2xl transition-all duration-300 relative border-2"
           style={{
-            ...(isFocused ? { 
+            ...(isFocused ? {
               boxShadow: `0 0 20px 4px ${providerColor}40, 0 0 40px 8px ${providerColor}20`,
               borderColor: providerColor
-            } : {})
+            } : {
+              borderColor: 'transparent'
+            })
           }}
         >
           {/* 智能边框发光效果 */}
@@ -223,7 +221,7 @@ const Composer: React.FC<ComposerProps> = ({ globalMousePosition, isMouseInChatA
             </>
           )}
 
-          <div className="flex items-center gap-1 w-full">
+          <div className="flex items-center w-full">
             <button
               onClick={() => {
                 // 预留功能：上传文件、添加附件等
@@ -247,7 +245,7 @@ const Composer: React.FC<ComposerProps> = ({ globalMousePosition, isMouseInChatA
               onBlur={() => setIsFocused(false)}
               placeholder="Ask anything..."
               rows={1}
-              className="flex-1 bg-transparent px-2 py-0 text-gray-200 placeholder-gray-500 focus:outline-none resize-none max-h-48 min-h-[48px] flex items-center leading-normal"
+              className="flex-1 bg-transparent pl-0 pr-2 py-0 text-gray-200 placeholder-gray-500 focus:outline-none resize-none max-h-48 min-h-[48px] flex items-center leading-normal"
               style={{ paddingTop: '12px', paddingBottom: '12px' }}
               disabled={isStreaming}
             />
