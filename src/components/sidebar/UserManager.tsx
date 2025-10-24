@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { User, Settings, LogOut, ChevronUp, Mail } from 'lucide-react';
+import { User, Settings, LogOut, ChevronUp, Mail, ChevronLeft } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import useAuthStore from '@/lib/auth-store';
 import { useTheme } from '@/lib/ThemeProvider';
@@ -8,6 +8,7 @@ const UserManager: React.FC = () => {
   const { user, signOut } = useAuthStore();
   const { providerColor } = useTheme();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isSigningOut, setIsSigningOut] = useState(false);
 
   const handleSignOut = async () => {
@@ -16,6 +17,15 @@ const UserManager: React.FC = () => {
       await signOut();
     } finally {
       setIsSigningOut(false);
+      setIsSettingsOpen(false);
+      setIsMenuOpen(false);
+    }
+  };
+
+  const handleBack = () => {
+    if (isSettingsOpen) {
+      setIsSettingsOpen(false);
+    } else {
       setIsMenuOpen(false);
     }
   };
@@ -72,54 +82,81 @@ const UserManager: React.FC = () => {
             transition={{ duration: 0.15 }}
             className="w-full bg-black/80 backdrop-blur-lg rounded-lg border border-white/20 shadow-lg overflow-hidden"
           >
-            {/* 用户详细信息 */}
-            <div className="p-4 border-b border-white/10">
-              <div className="flex items-center gap-3">
-                <div
-                  className="w-12 h-12 rounded-full flex items-center justify-center transition-colors duration-300"
-                  style={{
-                    backgroundColor: `${providerColor}20`,
-                  }}
-                >
-                  <User
-                    className="w-6 h-6 transition-colors duration-300"
-                    style={{ color: providerColor }}
-                  />
-                </div>
-                <div className="min-w-0 flex-1">
-                  <div className="font-medium text-white truncate">
-                    {userName}
+            {!isSettingsOpen ? (
+              <>
+                {/* 用户详细信息 */}
+                <div className="p-4 border-b border-white/10">
+                  <div className="flex items-center gap-3">
+                    <div
+                      className="w-12 h-12 rounded-full flex items-center justify-center transition-colors duration-300"
+                      style={{
+                        backgroundColor: `${providerColor}20`,
+                      }}
+                    >
+                      <User
+                        className="w-6 h-6 transition-colors duration-300"
+                        style={{ color: providerColor }}
+                      />
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <div className="font-medium text-white truncate">
+                        {userName}
+                      </div>
+                      <div className="text-sm text-gray-400 truncate flex items-center gap-1.5">
+                        <Mail className="w-[1em] h-[1em] flex-shrink-0" />
+                        {userEmail}
+                      </div>
+                    </div>
                   </div>
-                  <div className="text-sm text-gray-400 truncate flex items-center gap-1.5">
-                    <Mail className="w-[1em] h-[1em] flex-shrink-0" />
-                    {userEmail}
+                </div>
+
+                {/* 菜单项 */}
+                <div className="py-2">
+                  <button
+                    onClick={() => setIsSettingsOpen(true)}
+                    className="w-full flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-200 hover:bg-white/10 hover:text-white transition-colors"
+                  >
+                    <Settings className="w-4 h-4" />
+                    账户设置
+                  </button>
+
+                  <button
+                    onClick={handleBack}
+                    className="w-full flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-200 hover:bg-white/10 hover:text-white transition-colors"
+                  >
+                    <ChevronLeft className="w-4 h-4" />
+                    返回
+                  </button>
+                </div>
+              </>
+            ) : (
+              <>
+                {/* 账户设置页面 */}
+                <div className="p-4 border-b border-white/10">
+                  <div className="flex items-center gap-3">
+                    <button
+                      onClick={() => setIsSettingsOpen(false)}
+                      className="p-1.5 rounded-md hover:bg-white/10 text-gray-400 hover:text-white transition-colors"
+                    >
+                      <ChevronLeft className="w-5 h-5" />
+                    </button>
+                    <div className="font-medium text-white">账户设置</div>
                   </div>
                 </div>
-              </div>
-            </div>
 
-            {/* 菜单项 */}
-            <div className="py-2">
-              <button
-                onClick={() => {
-                  console.log('打开设置');
-                  setIsMenuOpen(false);
-                }}
-                className="w-full flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-200 hover:bg-white/10 hover:text-white transition-colors"
-              >
-                <Settings className="w-4 h-4" />
-                账户设置
-              </button>
-
-              <button
-                onClick={handleSignOut}
-                disabled={isSigningOut}
-                className="w-full flex items-center gap-3 px-4 py-3 text-sm font-medium text-red-400 hover:bg-red-500/20 hover:text-red-300 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                <LogOut className="w-4 h-4" />
-                {isSigningOut ? '退出中...' : '退出登录'}
-              </button>
-            </div>
+                {/* 设置菜单项 */}
+                <div className="py-2">
+                  <button
+                    onClick={handleSignOut}
+                    disabled={isSigningOut}
+                    className="w-full flex items-center gap-3 px-4 py-3 text-sm font-medium text-red-400 hover:bg-red-500/20 hover:text-red-300 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    <LogOut className="w-4 h-4" />
+                    {isSigningOut ? '退出中...' : '退出登录'}
+                  </button>
+                </div>
+              </>
+            )}
           </motion.div>
         )}
       </AnimatePresence>
