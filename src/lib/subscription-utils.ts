@@ -52,12 +52,45 @@ export async function getCurrentUserSubscription(): Promise<UserSubscription | n
       .select('*')
       .eq('user_id', user.id)
       .eq('status', 'active')
+      .maybeSingle();
+
+    if (error) throw error;
+
+    if (!data) {
+      const newSubscription = await createDefaultSubscription(user.id);
+      return newSubscription;
+    }
+
+    return data;
+  } catch (error) {
+    console.error('Error fetching user subscription:', error);
+    return null;
+  }
+}
+
+async function createDefaultSubscription(userId: string): Promise<UserSubscription | null> {
+  try {
+    const endDate = new Date();
+    endDate.setFullYear(endDate.getFullYear() + 100);
+
+    const { data, error } = await supabase
+      .from('user_subscriptions')
+      .insert({
+        user_id: userId,
+        plan_id: 'explorer',
+        billing_cycle: 'monthly',
+        status: 'active',
+        current_period_start: new Date().toISOString(),
+        current_period_end: endDate.toISOString(),
+        cancel_at_period_end: false,
+      })
+      .select()
       .single();
 
     if (error) throw error;
     return data;
   } catch (error) {
-    console.error('Error fetching user subscription:', error);
+    console.error('Error creating default subscription:', error);
     return null;
   }
 }
