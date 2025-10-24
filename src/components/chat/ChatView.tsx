@@ -80,22 +80,32 @@ const ChatView: React.FC = () => {
   };
 
   const providerText = getProviderText();
-  const lastUpdateRef = useRef(0);
   const rafRef = useRef<number | null>(null);
+  const isSelectingRef = useRef(false);
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!containerRef.current) return;
 
-    // 在聊天界面时，使用更低频率的更新（仅用于 Composer 组件）
-    if (!isHomePage) {
-      const now = Date.now();
-      if (now - lastUpdateRef.current < 100) return; // 10fps 足够
-      lastUpdateRef.current = now;
+    // 检测是否正在选择文本
+    const selection = window.getSelection();
+    const isSelecting = selection && selection.toString().length > 0;
+
+    // 检测鼠标按下（可能在拖动选择文本）
+    const isDragging = e.buttons === 1;
+
+    // 如果正在选择文本或拖动，只更新全局位置（用于 Composer），不触发光效渲染
+    if (isSelecting || (isDragging && !isHomePage && isSelectingRef.current)) {
+      isSelectingRef.current = true;
       setGlobalMousePosition({ x: e.clientX, y: e.clientY });
       return;
     }
 
-    // 首页使用 requestAnimationFrame 实现流畅的光效
+    // 重置选择状态
+    if (!isDragging) {
+      isSelectingRef.current = false;
+    }
+
+    // 使用 requestAnimationFrame 实现流畅的光效
     if (rafRef.current !== null) return;
 
     rafRef.current = requestAnimationFrame(() => {
@@ -105,6 +115,9 @@ const ChatView: React.FC = () => {
 
       // 设置全局鼠标位置（相对于视口）
       setGlobalMousePosition({ x: e.clientX, y: e.clientY });
+
+      // 只在首页时更新光效位置
+      if (!isHomePage) return;
 
       // 获取容器的原始尺寸（不受transform影响）
       const rect = containerRef.current.getBoundingClientRect();
