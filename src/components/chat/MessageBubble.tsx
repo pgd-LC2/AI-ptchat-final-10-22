@@ -11,6 +11,7 @@ import useChatStore from '@/lib/store';
 
 interface MessageBubbleProps {
   message: Message;
+  isLastAssistantMessage?: boolean;
 }
 
 // 复制功能组件
@@ -80,7 +81,7 @@ const extractTextFromChildren = (children: React.ReactNode): string => {
   
   return '';
 };
-const MessageBubble: React.FC<MessageBubbleProps> = ({ message }) => {
+const MessageBubble: React.FC<MessageBubbleProps> = ({ message, isLastAssistantMessage = false }) => {
   const isUser = message.role === 'user';
   const { messageReasoningVisibility, toggleMessageReasoningVisibility } = useChatStore();
   const isReasoningVisible = messageReasoningVisibility[message.id] || false;
@@ -295,8 +296,9 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({ message }) => {
 
       {hasContent && !isThinkingOnly && (
         <div className={cn(
-          "flex items-center gap-1 mt-1.5 opacity-0 group-hover:opacity-100 transition-opacity duration-200",
-          isUser ? "mr-12" : "ml-12"
+          "flex items-center gap-1 mt-1.5 transition-opacity duration-200",
+          isUser ? "mr-12" : "ml-12",
+          isLastAssistantMessage && !isUser ? "opacity-100" : "opacity-0 group-hover:opacity-100"
         )}>
           <button
             onClick={handleCopyMessage}
