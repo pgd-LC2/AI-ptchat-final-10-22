@@ -9,7 +9,7 @@ import { cn } from '@/lib/utils';
 const RegisterPage: React.FC = () => {
   const navigate = useNavigate();
   const { signUp } = useAuthStore();
-  
+
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -42,7 +42,7 @@ const RegisterPage: React.FC = () => {
       const result = await signUp(formData.email, formData.password, {
         name: formData.name,
       });
-      
+
       if (result.error) {
         setError(result.error);
       } else {
@@ -65,17 +65,21 @@ const RegisterPage: React.FC = () => {
     if (error) setError('');
   };
 
+  const focusRing = 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neon-purple/60 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b1020]';
+
   return (
     <AuthLayout
       title="创建账户"
       subtitle="加入Orbital Chat，开启AI对话之旅"
     >
-      <form onSubmit={handleSubmit} className="space-y-6">
+      <form onSubmit={handleSubmit} className="space-y-6" noValidate>
         {/* 错误提示 */}
         {error && (
           <motion.div
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
+            role="alert"
+            aria-live="polite"
             className="flex items-start gap-3 p-4 rounded-xl bg-red-500/8 border border-red-500/15 text-red-400 text-sm leading-relaxed"
           >
             <AlertCircle className="w-4 h-4 mt-0.5 flex-shrink-0 text-red-400" />
@@ -96,7 +100,13 @@ const RegisterPage: React.FC = () => {
               value={formData.name}
               onChange={handleChange}
               required
-              className="w-full pl-12 pr-4 py-4 bg-black/20 border border-white/10 rounded-full text-white placeholder-gray-500 focus:outline-none focus:border-neon-purple/50 focus:bg-black/30 focus:ring-2 focus:ring-neon-purple/30 transition-all duration-300"
+              autoComplete="name"
+              className={cn(
+                'w-full pl-12 pr-4 py-4 bg-black/20 border border-white/10 rounded-full text-white placeholder-gray-500 transition-all duration-300',
+                'focus:outline-none focus:border-neon-purple/50 focus:bg-black/30 focus:ring-2 focus:ring-neon-purple/30',
+                focusRing,
+                isLoading && 'cursor-not-allowed opacity-80'
+              )}
               placeholder="请输入您的用户名"
               disabled={isLoading}
             />
@@ -116,7 +126,14 @@ const RegisterPage: React.FC = () => {
               value={formData.email}
               onChange={handleChange}
               required
-              className="w-full pl-12 pr-4 py-4 bg-black/20 border border-white/10 rounded-full text-white placeholder-gray-500 focus:outline-none focus:border-neon-purple/50 focus:bg-black/30 focus:ring-2 focus:ring-neon-purple/30 transition-all duration-300"
+              autoComplete="email"
+              inputMode="email"
+              className={cn(
+                'w-full pl-12 pr-4 py-4 bg-black/20 border border-white/10 rounded-full text-white placeholder-gray-500 transition-all duration-300',
+                'focus:outline-none focus:border-neon-purple/50 focus:bg-black/30 focus:ring-2 focus:ring-neon-purple/30',
+                focusRing,
+                isLoading && 'cursor-not-allowed opacity-80'
+              )}
               placeholder="请输入您的邮箱"
               disabled={isLoading}
             />
@@ -136,14 +153,25 @@ const RegisterPage: React.FC = () => {
               value={formData.password}
               onChange={handleChange}
               required
-              className="w-full pl-12 pr-14 py-4 bg-black/20 border border-white/10 rounded-full text-white placeholder-gray-500 focus:outline-none focus:border-neon-purple/50 focus:bg-black/30 focus:ring-2 focus:ring-neon-purple/30 transition-all duration-300"
+              autoComplete="new-password"
+              className={cn(
+                'w-full pl-12 pr-14 py-4 bg-black/20 border border-white/10 rounded-full text-white placeholder-gray-500 transition-all duration-300',
+                'focus:outline-none focus:border-neon-purple/50 focus:bg-black/30 focus:ring-2 focus:ring-neon-purple/30',
+                focusRing,
+                isLoading && 'cursor-not-allowed opacity-80'
+              )}
               placeholder="请输入密码（至少6位）"
               disabled={isLoading}
             />
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-300 transition-colors p-1"
+              aria-label={showPassword ? '隐藏密码' : '显示密码'}
+              aria-pressed={showPassword}
+              className={cn(
+                'absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-300 transition-colors p-1 rounded-full',
+                focusRing
+              )}
               disabled={isLoading}
             >
               {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
@@ -164,14 +192,25 @@ const RegisterPage: React.FC = () => {
               value={formData.confirmPassword}
               onChange={handleChange}
               required
-              className="w-full pl-12 pr-14 py-4 bg-black/20 border border-white/10 rounded-full text-white placeholder-gray-500 focus:outline-none focus:border-neon-purple/50 focus:bg-black/30 focus:ring-2 focus:ring-neon-purple/30 transition-all duration-300"
+              autoComplete="new-password"
+              className={cn(
+                'w-full pl-12 pr-14 py-4 bg-black/20 border border-white/10 rounded-full text-white placeholder-gray-500 transition-all duration-300',
+                'focus:outline-none focus:border-neon-purple/50 focus:bg-black/30 focus:ring-2 focus:ring-neon-purple/30',
+                focusRing,
+                isLoading && 'cursor-not-allowed opacity-80'
+              )}
               placeholder="请再次输入密码"
               disabled={isLoading}
             />
             <button
               type="button"
               onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-              className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-300 transition-colors p-1"
+              aria-label={showConfirmPassword ? '隐藏确认密码' : '显示确认密码'}
+              aria-pressed={showConfirmPassword}
+              className={cn(
+                'absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-300 transition-colors p-1 rounded-full',
+                focusRing
+              )}
               disabled={isLoading}
             >
               {showConfirmPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
@@ -184,12 +223,15 @@ const RegisterPage: React.FC = () => {
           type="submit"
           disabled={isLoading || isSuccess || !formData.name || !formData.email || !formData.password || !formData.confirmPassword}
           className={cn(
-            "w-full py-4 rounded-full font-medium transition-all duration-300 shadow-lg",
+            'w-full py-4 rounded-full font-medium transition-all duration-300 shadow-lg',
             isLoading || isSuccess || !formData.name || !formData.email || !formData.password || !formData.confirmPassword
-              ? "bg-gray-700/50 text-gray-500 cursor-not-allowed shadow-none"
-              : "bg-neon-purple hover:bg-neon-purple/90 text-white shadow-lg hover:shadow-neon-purple/25",
-            isSuccess && "!bg-green-500 !text-white"
+              ? 'bg-gray-700/50 text-gray-500 cursor-not-allowed shadow-none'
+              : 'bg-neon-purple hover:bg-neon-purple/90 text-white shadow-lg hover:shadow-neon-purple/25',
+            focusRing,
+            isSuccess && '!bg-green-500 !text-white'
           )}
+          aria-live="polite"
+          aria-busy={isLoading}
         >
           {isSuccess ? (
             <div className="flex items-center justify-center gap-2">
@@ -209,9 +251,12 @@ const RegisterPage: React.FC = () => {
         {/* 登录链接 */}
         <div className="text-center text-sm text-gray-400 pt-4">
           已有账户？{' '}
-          <Link 
-            to="/login" 
-            className="text-neon-purple hover:text-neon-purple/80 font-medium transition-colors hover:underline"
+          <Link
+            to="/login"
+            className={cn(
+              'text-neon-purple hover:text-neon-purple/80 font-medium transition-colors hover:underline rounded-full px-2 py-1',
+              focusRing
+            )}
           >
             立即登录
           </Link>

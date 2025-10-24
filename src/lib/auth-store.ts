@@ -3,10 +3,15 @@ import { persist, createJSONStorage } from 'zustand/middleware';
 import { User } from '@supabase/supabase-js';
 import { supabase } from './supabase';
 
+type AuthSubscription = { unsubscribe: () => void } | null;
+
+let authSubscription: AuthSubscription = null;
+
 interface AuthState {
   user: User | null;
   isLoading: boolean;
   isAuthenticated: boolean;
+  hasInitialized: boolean;
   signUp: (email: string, password: string, userData?: { name?: string }) => Promise<{ error?: string }>;
   signIn: (email: string, password: string) => Promise<{ error?: string }>;
   signOut: () => Promise<void>;
@@ -15,10 +20,11 @@ interface AuthState {
 
 const useAuthStore = create<AuthState>()(
   persist(
-    (set, _get) => ({
+    (set, get) => ({
       user: null,
       isLoading: true,
       isAuthenticated: false,
+      hasInitialized: false,
 
       signUp: async (email: string, password: string, userData = {}) => {
         try {
@@ -82,36 +88,43 @@ const useAuthStore = create<AuthState>()(
       },
 
       initialize: async () => {
+        if (get().hasInitialized) {
+          set({ isLoading: false });
+          return;
+        }
+
+        set({ isLoading: true });
+
         try {
-          set({ isLoading: true });
-          
-          const { data: { session } } = await supabase.auth.getSession();
-          
-          if (session?.user) {
-            set({ 
-              user: session.user, 
-              isAuthenticated: true,
-              isLoading: false 
-            });
-          } else {
-            set({ 
-              user: null, 
-              isAuthenticated: false,
-              isLoading: false 
-            });
+          const { data, error } = await supabase.auth.getSession();
+
+          if (error) {
+            throw error;
           }
 
-          // 监听认证状态变化
-          supabase.auth.onAuthStateChange((_event, session) => {
-            if (session?.user) {
-              set({ user: session.user, isAuthenticated: true });
-            } else {
-              set({ user: null, isAuthenticated: false });
-            }
+          const sessionUser = data.session?.user ?? null;
+
+          set({
+            user: sessionUser,
+            isAuthenticated: Boolean(sessionUser),
           });
+
+          if (!authSubscription) {
+            const { data: subscriptionData } = supabase.auth.onAuthStateChange((_event, session) => {
+              const nextUser = session?.user ?? null;
+              set({
+                user: nextUser,
+                isAuthenticated: Boolean(nextUser),
+              });
+            });
+
+            authSubscription = subscriptionData.subscription;
+          }
         } catch (error) {
           console.error('初始化认证状态失败:', error);
-          set({ isLoading: false });
+          set({ user: null, isAuthenticated: false });
+        } finally {
+          set({ isLoading: false, hasInitialized: true });
         }
       },
     }),

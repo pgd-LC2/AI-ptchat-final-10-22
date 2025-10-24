@@ -9,7 +9,7 @@ import { cn } from '@/lib/utils';
 const LoginPage: React.FC = () => {
   const navigate = useNavigate();
   const { signIn } = useAuthStore();
-  
+
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -26,7 +26,7 @@ const LoginPage: React.FC = () => {
 
     try {
       const result = await signIn(formData.email, formData.password);
-      
+
       if (result.error) {
         setError(result.error);
       } else {
@@ -49,17 +49,21 @@ const LoginPage: React.FC = () => {
     if (error) setError('');
   };
 
+  const focusRing = 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neon-purple/60 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b1020]';
+
   return (
     <AuthLayout
       title="欢迎回来"
       subtitle="登录您的账户，继续与世界顶尖AI对话"
     >
-      <form onSubmit={handleSubmit} className="space-y-8">
+      <form onSubmit={handleSubmit} className="space-y-8" noValidate>
         {/* 错误提示 */}
         {error && (
           <motion.div
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
+            role="alert"
+            aria-live="polite"
             className="flex items-start gap-3 p-4 rounded-xl bg-red-500/8 border border-red-500/15 text-red-400 text-sm leading-relaxed"
           >
             <AlertCircle className="w-4 h-4 mt-0.5 flex-shrink-0 text-red-400" />
@@ -80,7 +84,14 @@ const LoginPage: React.FC = () => {
               value={formData.email}
               onChange={handleChange}
               required
-              className="w-full pl-12 pr-4 py-4 bg-black/20 border border-white/10 rounded-full text-white placeholder-gray-500 focus:outline-none focus:border-neon-purple/50 focus:bg-black/30 focus:ring-2 focus:ring-neon-purple/30 transition-all duration-300"
+              autoComplete="email"
+              inputMode="email"
+              className={cn(
+                'w-full pl-12 pr-4 py-4 bg-black/20 border border-white/10 rounded-full text-white placeholder-gray-500 transition-all duration-300',
+                'focus:outline-none focus:border-neon-purple/50 focus:bg-black/30 focus:ring-2 focus:ring-neon-purple/30',
+                focusRing,
+                isLoading && 'cursor-not-allowed opacity-80'
+              )}
               placeholder="请输入您的邮箱"
               disabled={isLoading}
             />
@@ -100,14 +111,25 @@ const LoginPage: React.FC = () => {
               value={formData.password}
               onChange={handleChange}
               required
-              className="w-full pl-12 pr-14 py-4 bg-black/20 border border-white/10 rounded-full text-white placeholder-gray-500 focus:outline-none focus:border-neon-purple/50 focus:bg-black/30 focus:ring-2 focus:ring-neon-purple/30 transition-all duration-300"
+              autoComplete="current-password"
+              className={cn(
+                'w-full pl-12 pr-14 py-4 bg-black/20 border border-white/10 rounded-full text-white placeholder-gray-500 transition-all duration-300',
+                'focus:outline-none focus:border-neon-purple/50 focus:bg-black/30 focus:ring-2 focus:ring-neon-purple/30',
+                focusRing,
+                isLoading && 'cursor-not-allowed opacity-80'
+              )}
               placeholder="请输入您的密码"
               disabled={isLoading}
             />
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-300 transition-colors p-1"
+              aria-label={showPassword ? '隐藏密码' : '显示密码'}
+              aria-pressed={showPassword}
+              className={cn(
+                'absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-300 transition-colors p-1 rounded-full',
+                focusRing
+              )}
               disabled={isLoading}
             >
               {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
@@ -120,12 +142,15 @@ const LoginPage: React.FC = () => {
           type="submit"
           disabled={isLoading || isSuccess || !formData.email || !formData.password}
           className={cn(
-            "w-full py-4 rounded-full font-medium transition-all duration-300 shadow-lg",
+            'w-full py-4 rounded-full font-medium transition-all duration-300 shadow-lg',
             isLoading || isSuccess || !formData.email || !formData.password
-              ? "bg-gray-700/50 text-gray-500 cursor-not-allowed shadow-none"
-              : "bg-neon-purple hover:bg-neon-purple/90 text-white shadow-lg hover:shadow-neon-purple/25",
-            isSuccess && "!bg-green-500 !text-white"
+              ? 'bg-gray-700/50 text-gray-500 cursor-not-allowed shadow-none'
+              : 'bg-neon-purple hover:bg-neon-purple/90 text-white shadow-lg hover:shadow-neon-purple/25',
+            focusRing,
+            isSuccess && '!bg-green-500 !text-white'
           )}
+          aria-live="polite"
+          aria-busy={isLoading}
         >
           {isSuccess ? (
             <div className="flex items-center justify-center gap-2">
@@ -145,9 +170,12 @@ const LoginPage: React.FC = () => {
         {/* 注册链接 */}
         <div className="text-center text-sm text-gray-400 pt-4">
           还没有账户？{' '}
-          <Link 
-            to="/register" 
-            className="text-neon-purple hover:text-neon-purple/80 font-medium transition-colors hover:underline"
+          <Link
+            to="/register"
+            className={cn(
+              'text-neon-purple hover:text-neon-purple/80 font-medium transition-colors hover:underline rounded-full px-2 py-1',
+              focusRing
+            )}
           >
             立即注册
           </Link>
