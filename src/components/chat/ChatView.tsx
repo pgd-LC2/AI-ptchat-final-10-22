@@ -264,7 +264,7 @@ const ChatView: React.FC = () => {
       )}
 
         {activeConversationId && conversation ? (
-          <div className="absolute inset-0 z-10 flex flex-col">
+          <div className="relative z-10 flex flex-col flex-1">
             <Topbar />
             <div className="flex-1 flex flex-col overflow-hidden">
               <ChatWindow />
@@ -274,7 +274,7 @@ const ChatView: React.FC = () => {
             </div>
           </div>
         ) : tempConversation ? (
-          <div className="absolute inset-0 z-10 flex flex-col">
+          <div className="relative z-10 flex flex-col flex-1">
             <Topbar />
             <div className="flex-1 flex items-center justify-center text-center p-6">
               <div className="flex flex-col items-center">
