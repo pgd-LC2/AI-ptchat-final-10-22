@@ -52,17 +52,17 @@ const HomePage: React.FC<HomePageProps> = ({ providerColor }) => {
 
       {/* 输入区 */}
       <div className="w-full max-w-3xl mb-8">
-        <div className="glass-card rounded-full border border-white/10 p-2 flex items-center gap-2 hover:border-white/20 focus-within:border-white/30 transition-all duration-300">
+        <div className="glass-card rounded-full border border-white/10 p-1.5 flex items-center gap-1 hover:border-white/20 focus-within:border-white/30 transition-all duration-300">
           <textarea
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
             onKeyDown={handleKeyDown}
             placeholder="输入消息开始对话..."
-            className="flex-1 bg-transparent text-white placeholder-gray-500 outline-none resize-none px-5 max-h-32"
+            className="flex-1 bg-transparent text-white placeholder-gray-500 outline-none resize-none px-4 max-h-32"
             rows={1}
             style={{
-              minHeight: '44px',
-              lineHeight: '44px',
+              minHeight: '40px',
+              lineHeight: '40px',
               paddingTop: '0',
               paddingBottom: '0'
             }}
@@ -75,7 +75,7 @@ const HomePage: React.FC<HomePageProps> = ({ providerColor }) => {
           <button
             onClick={handleSend}
             disabled={!inputValue.trim()}
-            className="flex-shrink-0 w-11 h-11 rounded-full flex items-center justify-center transition-all duration-300 disabled:opacity-30 disabled:cursor-not-allowed hover:scale-105"
+            className="flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 disabled:opacity-30 disabled:cursor-not-allowed hover:scale-105"
             style={{
               background: inputValue.trim() ? providerColor : 'rgba(255, 255, 255, 0.08)',
             }}
