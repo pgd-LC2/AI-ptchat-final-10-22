@@ -120,10 +120,10 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({ message }) => {
       )}
       <div
         className={cn(
-          "glass-card rounded-2xl px-4 py-3 text-base leading-relaxed min-h-[44px] select-text",
+          "glass-card rounded-2xl px-4 py-3 text-base leading-relaxed min-h-[44px] select-text cursor-text",
           isUser ? "rounded-br-md" : "rounded-bl-md"
         )}
-        style={{ userSelect: 'text' }}
+        style={{ userSelect: 'text', cursor: 'text' }}
       >
         <div className="flex items-start justify-between gap-3">
           {isThinkingOnly ? (

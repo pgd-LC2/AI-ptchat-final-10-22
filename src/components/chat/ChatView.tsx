@@ -208,17 +208,22 @@ const ChatView: React.FC = () => {
         }}
         onMouseDown={handleMouseDown}
         onMouseMove={(e) => {
-          // 动态设置光标样式
+          // 动态设置光标样式（仅在首页）
+          if (!isHomePage) {
+            e.currentTarget.style.cursor = '';
+            return;
+          }
+
           const target = e.target as HTMLElement;
-          const isTextElement = target.tagName === 'H1' || 
-                                target.tagName === 'P' || 
-                                target.tagName === 'SPAN' || 
+          const isTextElement = target.tagName === 'H1' ||
+                                target.tagName === 'P' ||
+                                target.tagName === 'SPAN' ||
                                 (target.tagName === 'DIV' && target.textContent?.trim());
-          
-          if (isHomePage && !isWeatherPanelOpen && !isTextElement) {
+
+          if (!isWeatherPanelOpen && !isTextElement) {
             e.currentTarget.style.cursor = 'grab';
           } else {
-            e.currentTarget.style.cursor = 'default';
+            e.currentTarget.style.cursor = '';
           }
         }}
       >
