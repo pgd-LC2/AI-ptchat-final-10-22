@@ -6,6 +6,7 @@ import Sidebar from './components/sidebar/Sidebar';
 import ChatView from './components/chat/ChatView';
 import LoginPage from './components/auth/LoginPage';
 import RegisterPage from './components/auth/RegisterPage';
+import PricingPage from './components/pricing/PricingPage';
 import AuthGuard from './components/auth/AuthGuard';
 import Particles from './components/ui/Particles';
 import { ThemeProvider } from './lib/ThemeProvider';
@@ -35,13 +36,21 @@ function App() {
         <Routes>
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
-          <Route 
-            path="/*" 
+          <Route
+            path="/pricing"
+            element={
+              <AuthGuard>
+                <PricingPage />
+              </AuthGuard>
+            }
+          />
+          <Route
+            path="/*"
             element={
               <AuthGuard>
                 <ChatApp />
               </AuthGuard>
-            } 
+            }
           />
         </Routes>
       </ThemeProvider>
