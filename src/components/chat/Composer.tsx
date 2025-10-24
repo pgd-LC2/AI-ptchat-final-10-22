@@ -227,7 +227,7 @@ const Composer: React.FC<ComposerProps> = ({ globalMousePosition, isMouseInChatA
                 // 预留功能：上传文件、添加附件等
                 console.log('Plus button clicked');
               }}
-              className="flex-shrink-0 p-2 rounded-lg transition-colors hover:bg-white/5"
+              className="flex-shrink-0 p-2 rounded-full transition-colors hover:bg-white/5"
               title="添加附件"
             >
               <Plus
