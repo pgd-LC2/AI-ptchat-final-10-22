@@ -57,7 +57,7 @@ const HomePage: React.FC<HomePageProps> = ({ providerColor }) => {
             onClick={() => {
               console.log('Plus button clicked');
             }}
-            className="flex-shrink-0 p-2 ml-2 rounded-full transition-colors hover:bg-white/5"
+            className="flex-shrink-0 p-2 ml-1 rounded-full transition-colors hover:bg-white/5"
             title="添加附件"
           >
             <Plus className="w-5 h-5 text-gray-500" />
