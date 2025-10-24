@@ -80,20 +80,41 @@ const ChatView: React.FC = () => {
   };
 
   const providerText = getProviderText();
+  const lastUpdateRef = useRef(0);
+  const rafRef = useRef<number | null>(null);
+
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!containerRef.current) return;
 
-    // 获取容器的原始尺寸（不受transform影响）
-    const rect = containerRef.current.getBoundingClientRect();
+    // 在聊天界面时，使用更低频率的更新（仅用于 Composer 组件）
+    if (!isHomePage) {
+      const now = Date.now();
+      if (now - lastUpdateRef.current < 100) return; // 10fps 足够
+      lastUpdateRef.current = now;
+      setGlobalMousePosition({ x: e.clientX, y: e.clientY });
+      return;
+    }
 
-    // 计算时补偿拖拽偏移量
-    const adjustedX = e.clientX - dragOffset;
-    const x = ((adjustedX - rect.left) / rect.width) * 100;
-    const y = ((e.clientY - rect.top) / rect.height) * 100;
-    setMousePosition({ x, y });
+    // 首页使用 requestAnimationFrame 实现流畅的光效
+    if (rafRef.current !== null) return;
 
-    // 设置全局鼠标位置（相对于视口）
-    setGlobalMousePosition({ x: e.clientX, y: e.clientY });
+    rafRef.current = requestAnimationFrame(() => {
+      rafRef.current = null;
+
+      if (!containerRef.current) return;
+
+      // 设置全局鼠标位置（相对于视口）
+      setGlobalMousePosition({ x: e.clientX, y: e.clientY });
+
+      // 获取容器的原始尺寸（不受transform影响）
+      const rect = containerRef.current.getBoundingClientRect();
+
+      // 计算时补偿拖拽偏移量
+      const adjustedX = e.clientX - dragOffset;
+      const x = ((adjustedX - rect.left) / rect.width) * 100;
+      const y = ((e.clientY - rect.top) / rect.height) * 100;
+      setMousePosition({ x, y });
+    });
   };
 
   const handleMouseEnter = () => {
@@ -227,11 +248,11 @@ const ChatView: React.FC = () => {
           }
         }}
       >
-      {/* 全局鼠标跟随光流背景 */}
-      {isMouseInside && (
+      {/* 全局鼠标跟随光流背景 - 仅在首页显示 */}
+      {isMouseInside && isHomePage && (
         <>
           {/* 主光晕效果 */}
-          <div 
+          <div
             className="absolute pointer-events-none z-0"
             style={{
               left: `${mousePosition.x}%`,
