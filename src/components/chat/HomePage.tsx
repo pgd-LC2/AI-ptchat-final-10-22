@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Send, Sparkles } from 'lucide-react';
+import { Send, Sparkles, Plus } from 'lucide-react';
 import NeonCore from '../ui/NeonCore';
 import useChatStore from '@/lib/store';
 
@@ -52,13 +52,22 @@ const HomePage: React.FC<HomePageProps> = ({ providerColor }) => {
 
       {/* 输入区 */}
       <div className="w-full max-w-3xl mb-8">
-        <div className="glass-card rounded-full border border-white/10 p-1.5 flex items-center gap-1 hover:border-white/20 focus-within:border-white/30 transition-all duration-300">
+        <div className="glass-card rounded-full border border-white/10 p-1.5 flex items-center hover:border-white/20 focus-within:border-white/30 transition-all duration-300">
+          <button
+            onClick={() => {
+              console.log('Plus button clicked');
+            }}
+            className="flex-shrink-0 p-2 ml-2 rounded-full transition-colors hover:bg-white/5"
+            title="添加附件"
+          >
+            <Plus className="w-5 h-5 text-gray-500" />
+          </button>
           <textarea
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
             onKeyDown={handleKeyDown}
             placeholder="输入消息开始对话..."
-            className="flex-1 bg-transparent text-white placeholder-gray-500 outline-none resize-none px-4 max-h-32"
+            className="flex-1 bg-transparent text-white placeholder-gray-500 outline-none resize-none pl-1 pr-4 max-h-32"
             rows={1}
             style={{
               minHeight: '40px',
