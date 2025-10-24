@@ -17,8 +17,8 @@ const PROVIDER_COLORS: { [key: string]: string } = {
   auto: '#4CC9E9', // Auto 使用渐变色的中间色作为默认色
 };
 
-// AUTO渐变色数组 - 深渊蓝黑 → 墨蓝 → 冰青 → 冷紫
-const AUTO_COLORS = ['#0B1220', '#1F3556', '#4CC9E9', '#B7A6F7'];
+// AUTO渐变色数组 - 深蓝 → 墨蓝 → 冰青 → 冷紫
+const AUTO_COLORS = ['#2D4A6B', '#1F3556', '#4CC9E9', '#B7A6F7'];
 
 // 获取当前渐变色 - 改进的颜色插值算法
 const getAutoColor = () => {
