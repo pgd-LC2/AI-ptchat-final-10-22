@@ -8,6 +8,15 @@ interface ThemeContextType {
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
+// 静态提供商颜色映射（与 ProviderSelector 中的 STATIC_PROVIDERS 保持一致）
+const PROVIDER_COLORS: { [key: string]: string } = {
+  openai: '#7C3AED',
+  anthropic: '#F472B6',
+  google: '#22D3EE',
+  deepseek: '#4ade80',
+  auto: '#4CC9E9', // Auto 使用渐变色的中间色作为默认色
+};
+
 // AUTO渐变色数组 - 深渊蓝黑 → 墨蓝 → 冰青 → 冷紫
 const AUTO_COLORS = ['#0B1220', '#1F3556', '#4CC9E9', '#B7A6F7'];
 
@@ -59,10 +68,16 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const currentProviderId = conversation?.providerId || selectedProviderId;
   const provider = PROVIDERS.find(p => p.id === currentProviderId);
 
+  // 获取颜色：优先从 PROVIDERS 获取，如果没有则使用静态颜色映射
+  const getProviderColor = () => {
+    if (currentProviderId === 'auto') {
+      return getAutoColor();
+    }
+    return provider?.color || PROVIDER_COLORS[currentProviderId] || '#7C3AED';
+  };
+
   // 初始颜色基于当前provider
-  const [dynamicColor, setDynamicColor] = useState(() =>
-    currentProviderId === 'auto' ? getAutoColor() : (provider?.color || '#7C3AED')
-  );
+  const [dynamicColor, setDynamicColor] = useState(getProviderColor);
 
   // 为auto提供商设置动态颜色更新
   useEffect(() => {
@@ -74,14 +89,17 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         setDynamicColor(getAutoColor());
       }, 50); // 每50ms更新一次，确保缓慢渐变依然流畅
       return () => clearInterval(interval);
-    } else if (provider?.color) {
-      // 非AUTO模式时使用provider的颜色
-      setDynamicColor(provider.color);
+    } else {
+      // 非AUTO模式时使用provider的颜色或静态颜色
+      const color = provider?.color || PROVIDER_COLORS[currentProviderId] || '#7C3AED';
+      setDynamicColor(color);
     }
   }, [currentProviderId, provider?.color]);
 
-  // 对于auto提供商，使用动态颜色
-  const providerColor = currentProviderId === 'auto' ? dynamicColor : (provider?.color || '#7C3AED');
+  // 对于auto提供商，使用动态颜色；否则使用provider颜色或静态颜色映射
+  const providerColor = currentProviderId === 'auto'
+    ? dynamicColor
+    : (provider?.color || PROVIDER_COLORS[currentProviderId] || '#7C3AED');
 
   return (
     <ThemeContext.Provider value={{ providerColor }}>
@@ -94,7 +112,9 @@ export const useTheme = () => {
   const context = useContext(ThemeContext);
   if (context === undefined) {
     // 返回默认值而不是抛出错误，避免在组件树初始化期间的时序问题
-    return { providerColor: '#7C3AED' };
+    // 尝试从 store 中获取 selectedProviderId 来确定默认颜色
+    const selectedProviderId = 'auto'; // 默认使用 auto
+    return { providerColor: PROVIDER_COLORS[selectedProviderId] || '#4CC9E9' };
   }
   return context;
 };
