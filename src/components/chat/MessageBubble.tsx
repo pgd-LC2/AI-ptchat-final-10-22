@@ -120,10 +120,14 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({ message }) => {
       animate={{ opacity: 1, y: 0, scale: 1 }}
       transition={{ duration: 0.3, ease: 'easeOut' }}
       className={cn(
-        "flex items-start gap-4 w-full max-w-4xl mx-auto",
-        isUser ? "justify-end" : "justify-start"
+        "flex flex-col w-full max-w-4xl mx-auto group",
+        isUser ? "items-end" : "items-start"
       )}
     >
+      <div className={cn(
+        "flex items-start gap-4",
+        isUser ? "justify-end" : "justify-start"
+      )}>
       {!isUser && (
         <div className="flex-shrink-0 w-8 h-8 rounded-full glass-card flex items-center justify-center ring-1 ring-neon-cyan/50">
           <Bot className="w-5 h-5 text-neon-cyan" />
@@ -281,37 +285,30 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({ message }) => {
             </div>
           </motion.div>
         )}
-
-        {hasContent && !isThinkingOnly && (
-          <div className="mt-3 flex items-center justify-end">
-            <button
-              onClick={handleCopyMessage}
-              className={cn(
-                "flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs transition-all duration-200",
-                copied
-                  ? "bg-neon-cyan/20 text-neon-cyan"
-                  : "bg-white/5 text-gray-400 hover:bg-white/10 hover:text-gray-300"
-              )}
-              title="复制消息"
-            >
-              {copied ? (
-                <>
-                  <Check className="w-3 h-3" />
-                  <span>已复制</span>
-                </>
-              ) : (
-                <>
-                  <Copy className="w-3 h-3" />
-                  <span>复制</span>
-                </>
-              )}
-            </button>
-          </div>
-        )}
       </div>
       {isUser && (
         <div className="flex-shrink-0 w-8 h-8 rounded-full glass-card flex items-center justify-center ring-1 ring-neon-pink/50">
           <User className="w-5 h-5 text-neon-pink" />
+        </div>
+      )}
+      </div>
+
+      {hasContent && !isThinkingOnly && (
+        <div className={cn(
+          "flex items-center gap-1 mt-1.5 opacity-0 group-hover:opacity-100 transition-opacity duration-200",
+          isUser ? "mr-12" : "ml-12"
+        )}>
+          <button
+            onClick={handleCopyMessage}
+            className="p-1.5 rounded-md hover:bg-white/10 text-gray-400 hover:text-gray-200 transition-colors"
+            title="复制"
+          >
+            {copied ? (
+              <Check className="w-4 h-4 text-neon-cyan" />
+            ) : (
+              <Copy className="w-4 h-4" />
+            )}
+          </button>
         </div>
       )}
     </motion.div>
