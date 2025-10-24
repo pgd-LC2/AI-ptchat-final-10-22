@@ -108,18 +108,35 @@ const ChatView: React.FC = () => {
   const handleMouseDown = (e: React.MouseEvent) => {
     if (!isHomePage || isWeatherPanelOpen) return;
 
-    // 检查是否点击在可交互元素上
+    // 检查是否点击在可交互元素上或文本内容上
     const target = e.target as HTMLElement;
     const isInteractiveElement =
       target.tagName === 'TEXTAREA' ||
       target.tagName === 'INPUT' ||
       target.tagName === 'BUTTON' ||
+      target.tagName === 'A' ||
       target.closest('textarea') ||
       target.closest('input') ||
-      target.closest('button');
+      target.closest('button') ||
+      target.closest('a');
 
-    // 如果点击的是交互元素，不触发拖拽
-    if (isInteractiveElement) return;
+    // 检查是否在可能包含文本的元素上（允许文本选择）
+    const isTextElement =
+      target.tagName === 'P' ||
+      target.tagName === 'SPAN' ||
+      target.tagName === 'DIV' ||
+      target.tagName === 'H1' ||
+      target.tagName === 'H2' ||
+      target.tagName === 'H3' ||
+      target.tagName === 'H4' ||
+      target.tagName === 'H5' ||
+      target.tagName === 'H6' ||
+      target.tagName === 'LI' ||
+      target.tagName === 'CODE' ||
+      target.tagName === 'PRE';
+
+    // 如果点击的是交互元素或文本元素，不触发拖拽
+    if (isInteractiveElement || isTextElement) return;
 
     setIsDragging(true);
     setDragStartX(e.clientX);
