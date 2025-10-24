@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { User, Settings, LogOut, ChevronUp, Mail } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import useAuthStore from '@/lib/auth-store';
-import { cn } from '@/lib/utils';
 import { useTheme } from '@/lib/ThemeProvider';
 
 const UserManager: React.FC = () => {
@@ -26,51 +25,52 @@ const UserManager: React.FC = () => {
 
   return (
     <div className="relative">
-      {/* 用户信息按钮 */}
-      <button
-        onClick={() => setIsMenuOpen(!isMenuOpen)}
-        className="w-full p-3 rounded-lg bg-white/5 hover:bg-white/10 transition-colors border border-white/10"
-      >
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3 min-w-0">
-            <div
-              className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 transition-colors duration-300"
-              style={{
-                backgroundColor: `${providerColor}20`,
-              }}
-            >
-              <User
-                className="w-5 h-5 transition-colors duration-300"
-                style={{ color: providerColor }}
-              />
-            </div>
-            <div className="text-left min-w-0 flex-1">
-              <div className="font-medium text-white truncate text-sm">
-                {userName}
+      <AnimatePresence mode="wait">
+        {!isMenuOpen ? (
+          /* 用户信息按钮 */
+          <motion.button
+            key="button"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.15 }}
+            onClick={() => setIsMenuOpen(true)}
+            className="w-full p-3 rounded-lg bg-white/5 hover:bg-white/10 transition-colors border border-white/10"
+          >
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3 min-w-0">
+                <div
+                  className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 transition-colors duration-300"
+                  style={{
+                    backgroundColor: `${providerColor}20`,
+                  }}
+                >
+                  <User
+                    className="w-5 h-5 transition-colors duration-300"
+                    style={{ color: providerColor }}
+                  />
+                </div>
+                <div className="text-left min-w-0 flex-1">
+                  <div className="font-medium text-white truncate text-sm">
+                    {userName}
+                  </div>
+                  <div className="text-xs text-gray-400 truncate">
+                    {userEmail}
+                  </div>
+                </div>
               </div>
-              <div className="text-xs text-gray-400 truncate">
-                {userEmail}
-              </div>
+              <ChevronUp className="w-4 h-4 text-gray-400" />
             </div>
-          </div>
-          <ChevronUp 
-            className={cn(
-              "w-4 h-4 text-gray-400 transition-transform duration-200",
-              isMenuOpen ? "rotate-180" : ""
-            )}
-          />
-        </div>
-      </button>
-
-      {/* 用户菜单 */}
-      <AnimatePresence>
-        {isMenuOpen && (
+          </motion.button>
+        ) : (
+          /* 用户菜单 */
           <motion.div
-            initial={{ opacity: 0, y: 10, scale: 0.95 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 10, scale: 0.95 }}
-            transition={{ duration: 0.2 }}
-            className="absolute bottom-full left-0 right-0 mb-2 bg-black/80 backdrop-blur-lg rounded-lg border border-white/20 shadow-lg overflow-hidden"
+            key="menu"
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.95 }}
+            transition={{ duration: 0.15 }}
+            className="w-full bg-black/80 backdrop-blur-lg rounded-lg border border-white/20 shadow-lg overflow-hidden"
           >
             {/* 用户详细信息 */}
             <div className="p-4 border-b border-white/10">
@@ -102,7 +102,6 @@ const UserManager: React.FC = () => {
             <div className="py-2">
               <button
                 onClick={() => {
-                  // 这里可以添加设置页面的逻辑
                   console.log('打开设置');
                   setIsMenuOpen(false);
                 }}
@@ -111,7 +110,7 @@ const UserManager: React.FC = () => {
                 <Settings className="w-4 h-4" />
                 账户设置
               </button>
-              
+
               <button
                 onClick={handleSignOut}
                 disabled={isSigningOut}
@@ -127,9 +126,9 @@ const UserManager: React.FC = () => {
 
       {/* 点击空白区域关闭菜单 */}
       {isMenuOpen && (
-        <div 
-          className="fixed inset-0 z-[-1]" 
-          onClick={() => setIsMenuOpen(false)} 
+        <div
+          className="fixed inset-0 z-[-1]"
+          onClick={() => setIsMenuOpen(false)}
         />
       )}
     </div>
