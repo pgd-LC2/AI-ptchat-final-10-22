@@ -38,6 +38,12 @@ const ChatWindow: React.FC = () => {
     );
   }
 
+  // 找出最后一条 AI 消息
+  const messages = currentConversation.messages;
+  const lastAssistantMessageIndex = messages.map((msg, idx) => msg.role === 'assistant' ? idx : -1)
+    .filter(idx => idx !== -1)
+    .pop();
+
   return (
     <div
       ref={containerRef}
@@ -46,8 +52,12 @@ const ChatWindow: React.FC = () => {
       style={{ userSelect: 'text' }}
     >
       <div className="flex flex-col gap-6">
-        {currentConversation.messages.map((msg) => (
-          <MessageBubble key={msg.id} message={msg} />
+        {currentConversation.messages.map((msg, index) => (
+          <MessageBubble
+            key={msg.id}
+            message={msg}
+            isLastAssistantMessage={index === lastAssistantMessageIndex}
+          />
         ))}
         <div ref={messagesEndRef} />
       </div>

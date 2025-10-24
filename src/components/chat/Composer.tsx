@@ -156,7 +156,7 @@ const Composer: React.FC<ComposerProps> = ({ globalMousePosition, isMouseInChatA
   }, [input]);
 
   return (
-    <div className="px-6 pb-6">
+    <div className="px-6 pb-6 flex-shrink-0">
       <div
         className="w-full max-w-4xl mx-auto relative"
         ref={containerRef}

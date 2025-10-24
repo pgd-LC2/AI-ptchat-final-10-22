@@ -328,13 +328,11 @@ const ChatView: React.FC = () => {
       )}
 
         {activeConversationId && conversation ? (
-          <div className="relative z-10 flex flex-col flex-1">
+          <div className="relative z-10 flex flex-col h-full">
             <Topbar />
-            <div className="flex-1 flex flex-col overflow-hidden">
+            <div className="flex-1 flex flex-col min-h-0">
               <ChatWindow />
-              <div className="flex-shrink-0">
-                <Composer globalMousePosition={globalMousePosition} isMouseInChatArea={isMouseInside} />
-              </div>
+              <Composer globalMousePosition={globalMousePosition} isMouseInChatArea={isMouseInside} />
             </div>
           </div>
         ) : tempConversation ? (
