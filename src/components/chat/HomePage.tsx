@@ -1,15 +1,27 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Send, Sparkles } from 'lucide-react';
 import NeonCore from '../ui/NeonCore';
 import useChatStore from '@/lib/store';
 
 interface HomePageProps {
   providerColor: string;
+  suggestions?: string[];
 }
 
-const HomePage: React.FC<HomePageProps> = ({ providerColor }) => {
+const defaultSuggestions = [
+  '写一个创意故事',
+  '解释量子计算',
+  '帮我分析数据',
+  '生成代码示例'
+];
+
+const HomePage: React.FC<HomePageProps> = ({ providerColor, suggestions: propSuggestions }) => {
   const [inputValue, setInputValue] = useState('');
   const { selectedProviderId, selectedModelId, startNewChat, sendMessage } = useChatStore();
+
+  const suggestions = useMemo(() => {
+    return propSuggestions && propSuggestions.length > 0 ? propSuggestions : defaultSuggestions;
+  }, [propSuggestions]);
 
   const handleSend = async () => {
     if (!inputValue.trim()) return;
@@ -25,13 +37,6 @@ const HomePage: React.FC<HomePageProps> = ({ providerColor }) => {
       handleSend();
     }
   };
-
-  const suggestions = [
-    '写一个创意故事',
-    '解释量子计算',
-    '帮我分析数据',
-    '生成代码示例'
-  ];
 
   return (
     <div className="flex flex-col flex-1 items-center justify-center p-8 relative z-10">
@@ -86,24 +91,26 @@ const HomePage: React.FC<HomePageProps> = ({ providerColor }) => {
       </div>
 
       {/* 快捷建议 */}
-      <div className="w-full max-w-3xl">
-        <div className="flex flex-wrap gap-2 justify-center">
-          {suggestions.map((text, index) => (
-            <button
-              key={index}
-              onClick={() => setInputValue(text)}
-              className="glass-card rounded-full px-4 py-2.5 border border-white/5 hover:border-white/20 transition-all duration-300 group"
-            >
-              <div className="flex items-center gap-2">
-                <Sparkles className="w-3.5 h-3.5 text-gray-500 group-hover:text-gray-300 transition-colors" />
-                <span className="text-gray-400 group-hover:text-gray-200 transition-colors text-sm whitespace-nowrap">
-                  {text}
-                </span>
-              </div>
-            </button>
-          ))}
+      {suggestions.length > 0 && (
+        <div className="w-full max-w-3xl">
+          <div className="flex flex-wrap gap-2 justify-center">
+            {suggestions.map((text, index) => (
+              <button
+                key={`${text}-${index}`}
+                onClick={() => setInputValue(text)}
+                className="glass-card rounded-full px-4 py-2.5 border border-white/5 hover:border-white/20 transition-all duration-300 group"
+              >
+                <div className="flex items-center gap-2">
+                  <Sparkles className="w-3.5 h-3.5 text-gray-500 group-hover:text-gray-300 transition-colors" />
+                  <span className="text-gray-400 group-hover:text-gray-200 transition-colors text-sm whitespace-nowrap">
+                    {text}
+                  </span>
+                </div>
+              </button>
+            ))}
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };
