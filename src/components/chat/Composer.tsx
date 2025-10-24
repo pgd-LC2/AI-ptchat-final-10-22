@@ -161,7 +161,7 @@ const Composer: React.FC<ComposerProps> = ({ globalMousePosition, isMouseInChatA
         ref={containerRef}
       >
         <div
-          className="glass-card rounded-2xl transition-all duration-300 relative border-2"
+          className="glass-card rounded-full transition-all duration-300 relative border-2"
           style={{
             ...(isFocused ? {
               boxShadow: `0 0 20px 4px ${providerColor}40, 0 0 40px 8px ${providerColor}20`,
@@ -221,7 +221,7 @@ const Composer: React.FC<ComposerProps> = ({ globalMousePosition, isMouseInChatA
             </>
           )}
 
-          <div className="flex items-center w-full">
+          <div className="flex items-center w-full pl-3">
             <button
               onClick={() => {
                 // 预留功能：上传文件、添加附件等
@@ -245,7 +245,7 @@ const Composer: React.FC<ComposerProps> = ({ globalMousePosition, isMouseInChatA
               onBlur={() => setIsFocused(false)}
               placeholder="Ask anything..."
               rows={1}
-              className="flex-1 bg-transparent pl-0 pr-2 py-0 text-gray-200 placeholder-gray-500 focus:outline-none resize-none max-h-48 min-h-[48px] flex items-center leading-normal"
+              className="flex-1 bg-transparent pl-1 pr-2 py-0 text-gray-200 placeholder-gray-500 focus:outline-none resize-none max-h-48 min-h-[48px] flex items-center leading-normal"
               style={{ paddingTop: '12px', paddingBottom: '12px' }}
               disabled={isStreaming}
             />
