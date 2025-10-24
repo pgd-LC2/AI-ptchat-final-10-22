@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Send, Loader } from 'lucide-react';
+import { Send, Loader, Plus } from 'lucide-react';
 import useChatStore from '@/lib/store';
 import { cn } from '@/lib/utils';
 import { useTheme } from '@/lib/ThemeProvider';
@@ -223,37 +223,53 @@ const Composer: React.FC<ComposerProps> = ({ globalMousePosition, isMouseInChatA
             </>
           )}
 
-          <textarea
-            value={input}
-            ref={textareaRef}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyDown={handleKeyDown}
-            onFocus={() => setIsFocused(true)}
-            onBlur={() => setIsFocused(false)}
-            placeholder="Ask anything..."
-            rows={1}
-            className="w-full bg-transparent pl-4 pr-16 py-0 text-gray-200 placeholder-gray-500 focus:outline-none resize-none max-h-48 min-h-[48px] flex items-center leading-normal"
-            style={{ paddingTop: '12px', paddingBottom: '12px' }}
-            disabled={isStreaming}
-          />
+          <div className="flex items-center gap-1 w-full">
+            <button
+              onClick={() => {
+                // 预留功能：上传文件、添加附件等
+                console.log('Plus button clicked');
+              }}
+              className="flex-shrink-0 p-2 rounded-lg transition-colors hover:bg-white/5"
+              title="添加附件"
+            >
+              <Plus
+                className="w-5 h-5"
+                style={{ color: isFocused ? providerColor : "#6B7280" }}
+              />
+            </button>
+
+            <textarea
+              value={input}
+              ref={textareaRef}
+              onChange={(e) => setInput(e.target.value)}
+              onKeyDown={handleKeyDown}
+              onFocus={() => setIsFocused(true)}
+              onBlur={() => setIsFocused(false)}
+              placeholder="Ask anything..."
+              rows={1}
+              className="flex-1 bg-transparent px-2 py-0 text-gray-200 placeholder-gray-500 focus:outline-none resize-none max-h-48 min-h-[48px] flex items-center leading-normal"
+              style={{ paddingTop: '12px', paddingBottom: '12px' }}
+              disabled={isStreaming}
+            />
+          </div>
         </div>
-        
+
         <button
           onClick={handleSend}
           disabled={isStreaming}
           className="absolute right-3 top-1/2 -translate-y-1/2 p-2 rounded-lg transition-colors"
-          style={{ 
+          style={{
             backgroundColor: "transparent"
           }}
         >
           {isStreaming ? (
-            <Loader 
-              className="w-5 h-5 animate-spin" 
+            <Loader
+              className="w-5 h-5 animate-spin"
               style={{ color: isFocused ? providerColor : "#6B7280" }}
             />
           ) : (
-            <Send 
-              className="w-5 h-5" 
+            <Send
+              className="w-5 h-5"
               style={{ color: isFocused ? providerColor : "#6B7280" }}
             />
           )}
