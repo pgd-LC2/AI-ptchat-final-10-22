@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import ProviderSelector from './ProviderSelector';
 import NeonCore from '../ui/NeonCore';
+import UsageMeter from '../ui/UsageMeter';
 import useChatStore from '@/lib/store';
 import { ChevronDown } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -98,7 +99,7 @@ const Topbar: React.FC = () => {
               <span>{providerName} / {modelLabel}</span>
               <ChevronDown className={`w-3 h-3 transition-transform ${isModelSelectorOpen ? 'rotate-180' : ''}`} />
             </button>
-            
+
             {isModelSelectorOpen && (
               <div className="absolute top-full left-0 mt-1 bg-black/40 backdrop-blur-lg rounded-lg border border-white/10 z-10 min-w-[150px]">
                 {currentModels.map(model => (
@@ -118,7 +119,10 @@ const Topbar: React.FC = () => {
           </div>
         </div>
       </div>
-      <ProviderSelector />
+      <div className="flex items-center gap-4">
+        <UsageMeter />
+        <ProviderSelector />
+      </div>
     </div>
   );
 };

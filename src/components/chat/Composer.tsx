@@ -2,6 +2,8 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Send, Loader, Plus } from 'lucide-react';
 import useChatStore from '@/lib/store';
 import { useTheme } from '@/lib/ThemeProvider';
+import { checkMessageLimit, incrementMessageCount } from '@/lib/subscription-utils';
+import UpgradeModal from '../ui/UpgradeModal';
 
 interface ComposerProps {
   globalMousePosition: { x: number; y: number };
@@ -18,12 +20,23 @@ const Composer: React.FC<ComposerProps> = ({ globalMousePosition, isMouseInChatA
   const [isFocused, setIsFocused] = useState(false);
   const [borderGlow, setBorderGlow] = useState({ side: '', position: 0, visible: false });
   const [isMouseOverInput, setIsMouseOverInput] = useState(false);
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
+  const [upgradeReason, setUpgradeReason] = useState<{ remaining: number; limit: number }>({ remaining: 0, limit: 0 });
 
-  const handleSend = () => {
-    if (input.trim() && !isStreaming) {
-      sendMessage(input.trim());
-      setInput('');
+  const handleSend = async () => {
+    if (!input.trim() || isStreaming) return;
+
+    const limitCheck = await checkMessageLimit();
+
+    if (!limitCheck.allowed) {
+      setUpgradeReason({ remaining: limitCheck.remaining, limit: limitCheck.limit });
+      setShowUpgradeModal(true);
+      return;
     }
+
+    await incrementMessageCount();
+    sendMessage(input.trim());
+    setInput('');
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
@@ -155,11 +168,20 @@ const Composer: React.FC<ComposerProps> = ({ globalMousePosition, isMouseInChatA
   }, [input]);
 
   return (
-    <div className="px-6 pb-6 flex-shrink-0">
-      <div
-        className="w-full max-w-4xl mx-auto relative"
-        ref={containerRef}
-      >
+    <>
+      <UpgradeModal
+        isOpen={showUpgradeModal}
+        onClose={() => setShowUpgradeModal(false)}
+        reason="limit_reached"
+        remaining={upgradeReason.remaining}
+        limit={upgradeReason.limit}
+      />
+
+      <div className="px-6 pb-6 flex-shrink-0">
+        <div
+          className="w-full max-w-4xl mx-auto relative"
+          ref={containerRef}
+        >
         <div
           className="glass-card rounded-full transition-all duration-300 relative border-2"
           style={{
@@ -274,6 +296,7 @@ const Composer: React.FC<ComposerProps> = ({ globalMousePosition, isMouseInChatA
         </button>
       </div>
     </div>
+    </>
   );
 };
 
