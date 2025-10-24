@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Send } from 'lucide-react';
+import { Send, Sparkles } from 'lucide-react';
 import NeonCore from '../ui/NeonCore';
 import useChatStore from '@/lib/store';
 
@@ -14,13 +14,8 @@ const HomePage: React.FC<HomePageProps> = ({ providerColor }) => {
   const handleSend = async () => {
     if (!inputValue.trim()) return;
 
-    // 创建新聊天
     startNewChat(selectedProviderId, selectedModelId);
-
-    // 发送消息
     await sendMessage(inputValue.trim());
-
-    // 清空输入框
     setInputValue('');
   };
 
@@ -31,35 +26,43 @@ const HomePage: React.FC<HomePageProps> = ({ providerColor }) => {
     }
   };
 
+  const suggestions = [
+    '写一个创意故事',
+    '解释量子计算',
+    '帮我分析数据',
+    '生成代码示例'
+  ];
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center text-center p-4 relative z-10">
-      <NeonCore providerColor={providerColor} />
-      <h1 className="text-4xl font-bold mt-6 bg-gradient-to-r from-white via-gray-100 to-gray-300 bg-clip-text text-transparent">
-        Orbital Chat
-      </h1>
-      <div className="mt-4 max-w-2xl">
-        <p className="text-xl text-gray-300 mb-3">
-          连接世界顶尖AI大模型的统一平台
-        </p>
-        <p className="text-gray-400 text-base leading-relaxed mb-6">
-          GPT-5、Claude 4 Sonnet、Gemini 2.5 Pro、DeepSeek V3.1 —
-          在一个界面中体验全球最先进的人工智能，释放无限创造力
+    <div className="flex flex-col flex-1 items-center justify-center p-8 relative z-10">
+      {/* 核心光效 */}
+      <div className="mb-8">
+        <NeonCore providerColor={providerColor} />
+      </div>
+
+      {/* 标题区 */}
+      <div className="text-center mb-12">
+        <h1 className="text-5xl font-bold mb-4 bg-gradient-to-r from-white via-gray-100 to-gray-400 bg-clip-text text-transparent">
+          Orbital Chat
+        </h1>
+        <p className="text-gray-400 text-lg">
+          连接世界顶尖AI模型的统一平台
         </p>
       </div>
 
-      {/* 胶囊输入框 */}
-      <div className="mt-12 w-full max-w-3xl">
-        <div className="glass-card rounded-full border border-white/10 p-2 pr-2 flex items-center gap-1 hover:border-white/20 transition-all duration-300">
+      {/* 输入区 */}
+      <div className="w-full max-w-3xl mb-8">
+        <div className="glass-card rounded-full border border-white/10 p-2 flex items-center gap-2 hover:border-white/20 focus-within:border-white/30 transition-all duration-300">
           <textarea
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
             onKeyDown={handleKeyDown}
             placeholder="输入消息开始对话..."
-            className="flex-1 bg-transparent text-white placeholder-gray-500 outline-none resize-none px-4 max-h-32"
+            className="flex-1 bg-transparent text-white placeholder-gray-500 outline-none resize-none px-5 max-h-32"
             rows={1}
             style={{
-              minHeight: '40px',
-              lineHeight: '40px',
+              minHeight: '44px',
+              lineHeight: '44px',
               paddingTop: '0',
               paddingBottom: '0'
             }}
@@ -72,26 +75,33 @@ const HomePage: React.FC<HomePageProps> = ({ providerColor }) => {
           <button
             onClick={handleSend}
             disabled={!inputValue.trim()}
-            className="flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 disabled:opacity-40 disabled:cursor-not-allowed"
+            className="flex-shrink-0 w-11 h-11 rounded-full flex items-center justify-center transition-all duration-300 disabled:opacity-30 disabled:cursor-not-allowed hover:scale-105"
             style={{
-              background: inputValue.trim() ? providerColor : 'rgba(255, 255, 255, 0.1)',
+              background: inputValue.trim() ? providerColor : 'rgba(255, 255, 255, 0.08)',
             }}
           >
             <Send className="w-5 h-5 text-white" />
           </button>
         </div>
-        <p className="text-gray-500 text-xs mt-3">
-          按 Enter 发送，Shift + Enter 换行
-        </p>
       </div>
 
-      {/* 拖拽提示 */}
-      <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 glass-card px-6 py-3 rounded-full border border-white/10">
-        <div className="flex items-center gap-3 text-sm text-gray-400">
-          <div className="w-6 h-6 rounded-full border-2 border-gray-400 flex items-center justify-center">
-            <div className="w-1 h-1 bg-gray-400 rounded-full"></div>
-          </div>
-          <span>向左拖拽查看天气</span>
+      {/* 快捷建议 */}
+      <div className="w-full max-w-3xl">
+        <div className="grid grid-cols-2 gap-3">
+          {suggestions.map((text, index) => (
+            <button
+              key={index}
+              onClick={() => setInputValue(text)}
+              className="glass-card rounded-2xl px-5 py-4 text-left border border-white/5 hover:border-white/20 transition-all duration-300 group"
+            >
+              <div className="flex items-center gap-3">
+                <Sparkles className="w-4 h-4 text-gray-500 group-hover:text-gray-300 transition-colors" />
+                <span className="text-gray-400 group-hover:text-gray-200 transition-colors text-sm">
+                  {text}
+                </span>
+              </div>
+            </button>
+          ))}
         </div>
       </div>
     </div>
