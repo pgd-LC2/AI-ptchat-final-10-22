@@ -81,28 +81,20 @@ const ChatView: React.FC = () => {
 
   const providerText = getProviderText();
   const rafRef = useRef<number | null>(null);
-  const isSelectingRef = useRef(false);
+  const mouseDownTimeRef = useRef<number>(0);
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!containerRef.current) return;
 
-    // 检测是否正在选择文本
-    const selection = window.getSelection();
-    const isSelecting = selection && selection.toString().length > 0;
-
-    // 检测鼠标按下（可能在拖动选择文本）
+    // 检测是否正在拖动选择文本
     const isDragging = e.buttons === 1;
+    const timeSinceMouseDown = Date.now() - mouseDownTimeRef.current;
 
-    // 如果正在选择文本或拖动，只更新全局位置（用于 Composer），不触发光效渲染
-    if (isSelecting || (isDragging && !isHomePage && isSelectingRef.current)) {
-      isSelectingRef.current = true;
+    // 如果鼠标按下超过 150ms，认为是在选择文本，暂停渲染
+    if (isDragging && timeSinceMouseDown > 150) {
+      // 只更新全局位置（用于 Composer），不触发组件重渲染
       setGlobalMousePosition({ x: e.clientX, y: e.clientY });
       return;
-    }
-
-    // 重置选择状态
-    if (!isDragging) {
-      isSelectingRef.current = false;
     }
 
     // 使用 requestAnimationFrame 实现流畅的光效
@@ -116,9 +108,6 @@ const ChatView: React.FC = () => {
       // 设置全局鼠标位置（相对于视口）
       setGlobalMousePosition({ x: e.clientX, y: e.clientY });
 
-      // 只在首页时更新光效位置
-      if (!isHomePage) return;
-
       // 获取容器的原始尺寸（不受transform影响）
       const rect = containerRef.current.getBoundingClientRect();
 
@@ -129,6 +118,25 @@ const ChatView: React.FC = () => {
       setMousePosition({ x, y });
     });
   };
+
+  // 监听全局鼠标按下事件，记录时间
+  useEffect(() => {
+    const handleGlobalMouseDown = () => {
+      mouseDownTimeRef.current = Date.now();
+    };
+
+    const handleGlobalMouseUp = () => {
+      mouseDownTimeRef.current = 0;
+    };
+
+    window.addEventListener('mousedown', handleGlobalMouseDown);
+    window.addEventListener('mouseup', handleGlobalMouseUp);
+
+    return () => {
+      window.removeEventListener('mousedown', handleGlobalMouseDown);
+      window.removeEventListener('mouseup', handleGlobalMouseUp);
+    };
+  }, []);
 
   const handleMouseEnter = () => {
     setIsMouseInside(true);
@@ -261,8 +269,8 @@ const ChatView: React.FC = () => {
           }
         }}
       >
-      {/* 全局鼠标跟随光流背景 - 仅在首页显示 */}
-      {isMouseInside && isHomePage && (
+      {/* 全局鼠标跟随光流背景 */}
+      {isMouseInside && (
         <>
           {/* 主光晕效果 */}
           <div
