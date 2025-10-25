@@ -2,7 +2,7 @@
 import React from 'react';
 import { useState, useRef, useEffect } from 'react';
 import ChatWindow from './ChatWindow';
-import Composer from './Composer';
+import InputBox from './InputBox';
 import Topbar from '../topbar/Topbar';
 import useChatStore from '@/lib/store';
 import NeonCore from '../ui/NeonCore';
@@ -19,7 +19,6 @@ const ChatView: React.FC = () => {
   const { providerColor } = useTheme();
   const [mousePosition, setMousePosition] = useState({ x: 50, y: 50 });
   const [isMouseInside, setIsMouseInside] = useState(false);
-  const [globalMousePosition, setGlobalMousePosition] = useState({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState(false);
   const [dragStartX, setDragStartX] = useState(0);
   const [dragOffset, setDragOffset] = useState(0);
@@ -92,8 +91,6 @@ const ChatView: React.FC = () => {
 
     // 如果鼠标按下超过 150ms，认为是在选择文本，暂停渲染
     if (isDragging && timeSinceMouseDown > 150) {
-      // 只更新全局位置（用于 Composer），不触发组件重渲染
-      setGlobalMousePosition({ x: e.clientX, y: e.clientY });
       return;
     }
 
@@ -104,9 +101,6 @@ const ChatView: React.FC = () => {
       rafRef.current = null;
 
       if (!containerRef.current) return;
-
-      // 设置全局鼠标位置（相对于视口）
-      setGlobalMousePosition({ x: e.clientX, y: e.clientY });
 
       // 获取容器的原始尺寸（不受transform影响）
       const rect = containerRef.current.getBoundingClientRect();
@@ -332,7 +326,11 @@ const ChatView: React.FC = () => {
             <Topbar />
             <div className="flex-1 flex flex-col min-h-0">
               <ChatWindow />
-              <Composer globalMousePosition={globalMousePosition} isMouseInChatArea={isMouseInside} />
+              <div className="px-6 pb-6 flex-shrink-0">
+                <div className="w-full max-w-4xl mx-auto">
+                  <InputBox providerColor={providerColor} placeholder="Ask anything..." />
+                </div>
+              </div>
             </div>
           </div>
         ) : tempConversation ? (
@@ -356,8 +354,10 @@ const ChatView: React.FC = () => {
                 </p>
               </div>
             </div>
-            <div className="flex-shrink-0">
-              <Composer globalMousePosition={globalMousePosition} isMouseInChatArea={isMouseInside} />
+            <div className="px-6 pb-6 flex-shrink-0">
+              <div className="w-full max-w-4xl mx-auto">
+                <InputBox providerColor={providerColor} placeholder="Ask anything..." />
+              </div>
             </div>
           </div>
         ) : (
