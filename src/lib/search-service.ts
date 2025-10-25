@@ -13,6 +13,45 @@ export interface SearchResult {
   error?: string;
 }
 
+export interface CheckSearchNeedResult {
+  needsSearch: boolean;
+  reason?: string;
+  suggestedQuery?: string;
+}
+
+export async function checkSearchNeed(
+  userMessage: string,
+  conversationHistory: Array<{ role: string; content: string }> = []
+): Promise<CheckSearchNeedResult> {
+  try {
+    const response = await fetch(
+      `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/check-search-need`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+        },
+        body: JSON.stringify({
+          userMessage,
+          conversationHistory,
+        }),
+      }
+    );
+
+    if (!response.ok) {
+      console.error('检查搜索需求失败:', response.status);
+      return { needsSearch: false };
+    }
+
+    const result = await response.json();
+    return result;
+  } catch (error) {
+    console.error('检查搜索需求错误:', error);
+    return { needsSearch: false };
+  }
+}
+
 export async function summarizeQuery(userQuery: string): Promise<string> {
   try {
     const response = await fetch(

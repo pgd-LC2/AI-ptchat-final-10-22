@@ -5,6 +5,7 @@ import { Message, Conversation, ProviderId, MessageImage } from '@/types';
 import { streamResponse, handleStreamResponse } from '@/lib/api';
 import { ChatMessage } from '@/types';
 import { getOpenRouterModelName } from '@/lib/model-mapping';
+import { checkSearchNeed, performWebSearch, formatSearchResults } from '@/lib/search-service';
 
 interface ChatState {
   conversations: Record<string, Conversation>;
@@ -151,25 +152,25 @@ const useChatStore = create<ChatState>()(
 
       sendMessage: async (content) => {
         const { activeConversationId, tempConversation, addMessage, updateLastMessage, setStreaming } = get();
-        
+
         let conversationId: string | null = activeConversationId;
-        
+
         // 如果有临时聊天，先将其保存为真正的聊天
         if (tempConversation && !activeConversationId) {
           const newConversationId = tempConversation.id;
           // 生成聊天标题（使用用户消息的前20个字符）
           const title = content.length > 20 ? content.substring(0, 20) + '...' : content;
           const newConversation = { ...tempConversation, title };
-          
+
           set((state) => ({
             conversations: { ...state.conversations, [newConversationId]: newConversation },
             activeConversationId: newConversationId,
             tempConversation: null,
           }));
-          
+
           conversationId = newConversationId;
         }
-        
+
         if (!conversationId) return;
 
         const userMessage: Message = {
@@ -180,6 +181,48 @@ const useChatStore = create<ChatState>()(
         };
         addMessage(conversationId, userMessage);
         setStreaming(true);
+
+        // 检查是否需要搜索
+        const conversation = get().conversations[conversationId];
+        if (!conversation) {
+          setStreaming(false);
+          return;
+        }
+
+        const conversationHistory = conversation.messages
+          .slice(-5)
+          .map(msg => ({
+            role: msg.role,
+            content: msg.content,
+          }));
+
+        const searchCheck = await checkSearchNeed(content, conversationHistory);
+        console.log('🔍 搜索判断:', searchCheck);
+
+        let searchContext = '';
+        if (searchCheck.needsSearch) {
+          // 添加一条搜索提示消息
+          const searchingMessage: Message = {
+            id: `msg_${Date.now()}_search`,
+            role: 'assistant',
+            content: `🔍 正在搜索相关信息...
+原因: ${searchCheck.reason || '需要实时信息'}`,
+            createdAt: new Date(),
+          };
+          addMessage(conversationId, searchingMessage);
+
+          // 执行搜索
+          const searchResult = await performWebSearch({
+            query: searchCheck.suggestedQuery || content,
+            limit: 5,
+            scrapeContent: true,
+          });
+
+          if (searchResult.success && searchResult.results) {
+            searchContext = formatSearchResults(searchResult.results);
+            console.log('🔍 搜索结果:', searchResult.results.length, '条');
+          }
+        }
 
         const assistantMessage: Message = {
           id: `msg_${Date.now() + 1}`,
@@ -193,23 +236,38 @@ const useChatStore = create<ChatState>()(
 
         try {
           // 获取当前对话的消息历史，转换为 ChatMessage 格式
-          const conversation = get().conversations[conversationId];
-          if (!conversation) {
+          const currentConversation = get().conversations[conversationId];
+          if (!currentConversation) {
             throw new Error('Conversation not found');
           }
 
-          // 构建消息历史（排除刚添加的助手空消息）
-          const chatMessages: ChatMessage[] = conversation.messages
-            .filter(msg => !(msg.role === 'assistant' && msg.content === ''))
+          // 构建消息历史（排除刚添加的助手空消息和搜索提示消息）
+          const chatMessages: ChatMessage[] = currentConversation.messages
+            .filter(msg => {
+              // 排除空助手消息和搜索提示消息
+              if (msg.role === 'assistant' && msg.content === '') return false;
+              if (msg.id.includes('_search')) return false;
+              return true;
+            })
             .map(msg => ({
               role: msg.role as 'system' | 'user' | 'assistant',
               content: msg.content,
             }));
+
+          // 如果有搜索结果，添加到系统消息
+          if (searchContext) {
+            chatMessages.unshift({
+              role: 'system',
+              content: `以下是最新的网络搜索结果，请基于这些信息回答用户的问题：
+
+${searchContext}`,
+            });
+          }
           
           // 获取当前对话的OpenRouter模型名称
-          const openRouterModel = getOpenRouterModelName(conversation.providerId, conversation.modelId);
+          const openRouterModel = getOpenRouterModelName(currentConversation.providerId, currentConversation.modelId);
           
-          console.log(`Using model: ${openRouterModel} (Provider: ${conversation.providerId}, Model: ${conversation.modelId})`);
+          console.log(`Using model: ${openRouterModel} (Provider: ${currentConversation.providerId}, Model: ${currentConversation.modelId})`);
           
           // 调用实际的 OpenRouter API
           const stream = await streamResponse(chatMessages, openRouterModel);
