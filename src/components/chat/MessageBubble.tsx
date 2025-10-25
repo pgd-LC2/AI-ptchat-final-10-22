@@ -156,7 +156,7 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({ message, isLastAssistantM
                 思维过程
               </span>
             </div>
-            <div className="bg-black/20 rounded-lg p-3 text-sm text-gray-300 font-mono leading-relaxed">
+            <div className="bg-black/20 rounded-lg p-3 text-sm text-gray-300 font-mono leading-relaxed max-h-64 overflow-y-auto">
               <p className="whitespace-pre-wrap">{message.reasoning}</p>
             </div>
           </motion.div>
