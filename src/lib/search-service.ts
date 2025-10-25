@@ -113,7 +113,7 @@ ${FIRECRAWL_DOC}
   "searches": [
     {
       "query": "搜索词",
-      "limit": 3,
+      "limit": 12,
       "sources": ["web"],
       "categories": ["github"],
       "tbs": "qdr:d",
@@ -126,7 +126,7 @@ ${FIRECRAWL_DOC}
 要求：
 1. 最多2个搜索请求
 2. 根据问题类型选择合适的参数（实时新闻用tbs，技术问题用categories等）
-3. 每个搜索limit设为3
+3. 每个搜索limit设为10-15之间
 4. scrapeContent默认为true
 5. 只返回JSON，不要其他文字`,
             },
@@ -168,12 +168,12 @@ ${FIRECRAWL_DOC}
     }
 
     return {
-      searches: [{ query: userQuery, limit: 3, scrapeContent: true }]
+      searches: [{ query: userQuery, limit: 12, scrapeContent: true }]
     };
   } catch (error) {
     console.error('生成搜索计划错误:', error);
     return {
-      searches: [{ query: userQuery, limit: 3, scrapeContent: true }]
+      searches: [{ query: userQuery, limit: 12, scrapeContent: true }]
     };
   }
 }

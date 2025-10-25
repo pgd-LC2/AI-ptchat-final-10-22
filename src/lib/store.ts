@@ -182,6 +182,17 @@ const useChatStore = create<ChatState>()(
         addMessage(conversationId, userMessage);
         setStreaming(true);
 
+        // 立即添加助手消息占位
+        const assistantMessageId = `msg_${Date.now() + 1}`;
+        const assistantMessage: Message = {
+          id: assistantMessageId,
+          role: 'assistant',
+          content: '',
+          reasoning: '',
+          createdAt: new Date(),
+        };
+        addMessage(conversationId, assistantMessage);
+
         // 检查是否需要搜索
         const conversation = get().conversations[conversationId];
         if (!conversation) {
@@ -214,16 +225,6 @@ const useChatStore = create<ChatState>()(
           }
         }
 
-        const assistantMessage: Message = {
-          id: `msg_${Date.now() + 1}`,
-          role: 'assistant',
-          content: '',
-          reasoning: '',
-          images: [],
-          createdAt: new Date(),
-        };
-        addMessage(conversationId, assistantMessage);
-
         try {
           // 获取当前对话的消息历史，转换为 ChatMessage 格式
           const currentConversation = get().conversations[conversationId];
@@ -231,13 +232,14 @@ const useChatStore = create<ChatState>()(
             throw new Error('Conversation not found');
           }
 
-          // 构建消息历史（排除刚添加的助手空消息）
+          // 构建消息历史（排除刚添加的助手空消息，保留最后一条用户消息）
           const chatMessages: ChatMessage[] = currentConversation.messages
             .filter(msg => {
-              // 排除空助手消息
+              // 排除空助手消息，但保留最新的用户消息
               if (msg.role === 'assistant' && msg.content === '') return false;
               return true;
             })
+            .slice(-10) // 只保留最近10条消息
             .map(msg => ({
               role: msg.role as 'system' | 'user' | 'assistant',
               content: msg.content,
