@@ -48,7 +48,7 @@ const AttachmentMenu: React.FC<AttachmentMenuProps> = ({ isOpen, onClose, onSele
           transition={{ duration: 0.15 }}
           className="fixed z-[9999] glass-card rounded-3xl border border-white/10 shadow-2xl overflow-hidden"
           style={{
-            minWidth: '280px',
+            minWidth: '240px',
             left: `${triggerRect.left}px`,
             top: `${triggerRect.bottom + 8}px`,
           }}
@@ -61,7 +61,7 @@ const AttachmentMenu: React.FC<AttachmentMenuProps> = ({ isOpen, onClose, onSele
                   onSelectOption(option.id as any);
                   onClose();
                 }}
-                className="w-full flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-white/5 transition-colors text-left group"
+                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/5 transition-colors text-left group"
               >
                 <option.icon className="w-5 h-5 text-gray-400 group-hover:text-white transition-colors flex-shrink-0" />
                 <span className="text-sm text-gray-200 group-hover:text-white transition-colors flex-1">
@@ -78,7 +78,7 @@ const AttachmentMenu: React.FC<AttachmentMenuProps> = ({ isOpen, onClose, onSele
             <div className="h-px bg-white/5 my-1.5" />
 
             <button
-              className="w-full flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-white/5 transition-colors text-left group"
+              className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/5 transition-colors text-left group"
               onClick={onClose}
             >
               <MoreHorizontal className="w-5 h-5 text-gray-400 group-hover:text-white transition-colors flex-shrink-0" />
