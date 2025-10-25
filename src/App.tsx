@@ -18,10 +18,10 @@ const ChatApp: React.FC = () => {
       animate={{ opacity: 1 }}
       transition={{ duration: 0.4 }}
       className="h-screen w-screen flex overflow-hidden"
-      style={{ position: 'fixed', top: 0, left: 0, zIndex: 2 }}
+      style={{ position: 'fixed', top: 0, left: 0, zIndex: 10 }}
     >
       <Particles />
-      <div className="relative flex w-full h-full">
+      <div className="relative flex w-full h-full" style={{ zIndex: 10 }}>
         <Sidebar />
         <ChatView />
       </div>

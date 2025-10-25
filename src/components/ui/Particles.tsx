@@ -25,9 +25,9 @@ const Particles: React.FC = () => {
   }, []);
 
   return (
-    <div className="absolute inset-0 -z-10 h-full w-full bg-dark-bg-end bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:14px_24px]">
+    <div className="absolute inset-0 h-full w-full" style={{ zIndex: 5 }}>
       <div
-        className="absolute left-0 right-0 top-0 -z-10 h-full w-full transition-all duration-[2000ms] ease-out"
+        className="absolute left-0 right-0 top-0 h-full w-full transition-all duration-[2000ms] ease-out pointer-events-none"
         style={{
           background: `radial-gradient(circle 500px at ${position.x}% ${position.y}%, ${providerColor}20, transparent)`
         }}
