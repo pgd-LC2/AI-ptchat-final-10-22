@@ -24,7 +24,7 @@ const HomePage: React.FC<HomePageProps> = ({ providerColor }) => {
   ];
 
   return (
-    <div className="flex flex-col flex-1 items-center justify-center p-8 relative z-10">
+    <div className="flex flex-col flex-1 items-center justify-center p-8 relative">
       {/* 核心光效 */}
       <div className="mb-8">
         <NeonCore providerColor={providerColor} />
@@ -46,7 +46,7 @@ const HomePage: React.FC<HomePageProps> = ({ providerColor }) => {
       </div>
 
       {/* 快捷建议 */}
-      <div className="w-full max-w-3xl">
+      <div className="w-full max-w-3xl relative z-0">
         <div className="flex flex-wrap gap-2 justify-center">
           {suggestions.map((text, index) => (
             <button
