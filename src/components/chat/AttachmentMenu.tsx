@@ -1,4 +1,5 @@
 import React, { useRef, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { Paperclip, Search, Image, Code, Link as LinkIcon, MoveHorizontal as MoreHorizontal } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -9,7 +10,7 @@ interface AttachmentMenuProps {
   triggerRect?: DOMRect;
 }
 
-const AttachmentMenu: React.FC<AttachmentMenuProps> = ({ isOpen, onClose, onSelectOption }) => {
+const AttachmentMenu: React.FC<AttachmentMenuProps> = ({ isOpen, onClose, onSelectOption, triggerRect }) => {
   const menuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -36,18 +37,20 @@ const AttachmentMenu: React.FC<AttachmentMenuProps> = ({ isOpen, onClose, onSele
     { id: 'link', icon: LinkIcon, label: '添加源' },
   ];
 
-  return (
+  const menuContent = (
     <AnimatePresence>
-      {isOpen && (
+      {isOpen && triggerRect && (
         <motion.div
           ref={menuRef}
           initial={{ opacity: 0, y: -10, scale: 0.95 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
           exit={{ opacity: 0, y: -10, scale: 0.95 }}
           transition={{ duration: 0.15 }}
-          className="absolute left-0 top-full mt-2 z-[100] glass-card rounded-3xl border border-white/10 shadow-2xl overflow-hidden"
+          className="fixed z-[9999] glass-card rounded-3xl border border-white/10 shadow-2xl overflow-hidden"
           style={{
             minWidth: '280px',
+            left: `${triggerRect.left}px`,
+            top: `${triggerRect.bottom + 8}px`,
           }}
         >
           <div className="p-1.5">
@@ -91,6 +94,8 @@ const AttachmentMenu: React.FC<AttachmentMenuProps> = ({ isOpen, onClose, onSele
       )}
     </AnimatePresence>
   );
+
+  return createPortal(menuContent, document.body);
 };
 
 export default AttachmentMenu;
