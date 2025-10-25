@@ -1,14 +1,16 @@
 import React, { useState } from 'react';
-import { User, Settings, LogOut, ChevronUp, Mail, ChevronLeft } from 'lucide-react';
+import { User, Settings, LogOut, ChevronUp, Mail, ChevronLeft, CreditCard } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import useAuthStore from '@/lib/auth-store';
 import { useTheme } from '@/lib/ThemeProvider';
+import SubscriptionView from '@/components/subscription/SubscriptionView';
 
 const UserManager: React.FC = () => {
   const { user, signOut } = useAuthStore();
   const { providerColor } = useTheme();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [isSubscriptionOpen, setIsSubscriptionOpen] = useState(false);
   const [isSigningOut, setIsSigningOut] = useState(false);
 
   const handleSignOut = async () => {
@@ -23,7 +25,9 @@ const UserManager: React.FC = () => {
   };
 
   const handleBack = () => {
-    if (isSettingsOpen) {
+    if (isSubscriptionOpen) {
+      setIsSubscriptionOpen(false);
+    } else if (isSettingsOpen) {
       setIsSettingsOpen(false);
     } else {
       setIsMenuOpen(false);
@@ -82,7 +86,9 @@ const UserManager: React.FC = () => {
             transition={{ duration: 0.15 }}
             className="w-full bg-black/80 backdrop-blur-lg rounded-lg border border-white/20 shadow-lg overflow-hidden"
           >
-            {!isSettingsOpen ? (
+            {isSubscriptionOpen ? (
+              <SubscriptionView onBack={() => setIsSubscriptionOpen(false)} />
+            ) : !isSettingsOpen ? (
               <>
                 {/* 用户详细信息 */}
                 <div className="p-4 border-b border-white/10">
@@ -112,6 +118,14 @@ const UserManager: React.FC = () => {
 
                 {/* 菜单项 */}
                 <div className="py-2">
+                  <button
+                    onClick={() => setIsSubscriptionOpen(true)}
+                    className="w-full flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-200 hover:bg-white/10 hover:text-white transition-colors"
+                  >
+                    <CreditCard className="w-4 h-4" />
+                    我的订阅
+                  </button>
+
                   <button
                     onClick={() => setIsSettingsOpen(true)}
                     className="w-full flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-200 hover:bg-white/10 hover:text-white transition-colors"
@@ -165,7 +179,11 @@ const UserManager: React.FC = () => {
       {isMenuOpen && (
         <div
           className="fixed inset-0 z-[-1]"
-          onClick={() => setIsMenuOpen(false)}
+          onClick={() => {
+            setIsMenuOpen(false);
+            setIsSettingsOpen(false);
+            setIsSubscriptionOpen(false);
+          }}
         />
       )}
     </div>
