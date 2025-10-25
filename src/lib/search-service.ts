@@ -154,7 +154,7 @@ ${FIRECRAWL_DOC}
           ],
           model: GEMINI_FLASH_MODEL,
           temperature: 0.5,
-          max_tokens: 800,
+          max_tokens: 2500,
           stream: false,
         }),
       }
