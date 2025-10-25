@@ -8,12 +8,14 @@ interface InputBoxProps {
   providerColor: string;
   onSend?: (message: string) => void;
   placeholder?: string;
+  menuPosition?: 'top' | 'bottom';
 }
 
 const InputBox: React.FC<InputBoxProps> = ({
   providerColor,
   onSend,
-  placeholder = '输入消息开始对话...'
+  placeholder = '输入消息开始对话...',
+  menuPosition = 'bottom'
 }) => {
   const [inputValue, setInputValue] = useState('');
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -149,6 +151,7 @@ const InputBox: React.FC<InputBoxProps> = ({
           onClose={() => setIsMenuOpen(false)}
           onSelectOption={handleMenuOption}
           triggerRect={plusButtonRef.current?.getBoundingClientRect()}
+          position={menuPosition}
         />
         <textarea
           value={inputValue}

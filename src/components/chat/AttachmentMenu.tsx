@@ -8,9 +8,10 @@ interface AttachmentMenuProps {
   onClose: () => void;
   onSelectOption: (option: 'search' | 'file' | 'image' | 'code' | 'link') => void;
   triggerRect?: DOMRect;
+  position?: 'top' | 'bottom';
 }
 
-const AttachmentMenu: React.FC<AttachmentMenuProps> = ({ isOpen, onClose, onSelectOption, triggerRect }) => {
+const AttachmentMenu: React.FC<AttachmentMenuProps> = ({ isOpen, onClose, onSelectOption, triggerRect, position = 'bottom' }) => {
   const menuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -37,21 +38,49 @@ const AttachmentMenu: React.FC<AttachmentMenuProps> = ({ isOpen, onClose, onSele
     { id: 'link', icon: LinkIcon, label: '添加源' },
   ];
 
+  const getMenuStyle = () => {
+    if (!triggerRect) return {};
+
+    if (position === 'top') {
+      return {
+        minWidth: '240px',
+        left: `${triggerRect.left}px`,
+        bottom: `${window.innerHeight - triggerRect.top + 8}px`,
+      };
+    } else {
+      return {
+        minWidth: '240px',
+        left: `${triggerRect.left}px`,
+        top: `${triggerRect.bottom + 8}px`,
+      };
+    }
+  };
+
+  const getAnimationProps = () => {
+    if (position === 'top') {
+      return {
+        initial: { opacity: 0, y: 10, scale: 0.95 },
+        animate: { opacity: 1, y: 0, scale: 1 },
+        exit: { opacity: 0, y: 10, scale: 0.95 },
+      };
+    } else {
+      return {
+        initial: { opacity: 0, y: -10, scale: 0.95 },
+        animate: { opacity: 1, y: 0, scale: 1 },
+        exit: { opacity: 0, y: -10, scale: 0.95 },
+      };
+    }
+  };
+
   const menuContent = (
     <AnimatePresence>
       {isOpen && triggerRect && (
         <motion.div
           ref={menuRef}
-          initial={{ opacity: 0, y: -10, scale: 0.95 }}
-          animate={{ opacity: 1, y: 0, scale: 1 }}
-          exit={{ opacity: 0, y: -10, scale: 0.95 }}
+          {...getAnimationProps()}
           transition={{ duration: 0.15 }}
           className="fixed z-[9999] glass-card rounded-3xl border border-white/10 shadow-2xl overflow-hidden"
-          style={{
-            minWidth: '240px',
-            left: `${triggerRect.left}px`,
-            top: `${triggerRect.bottom + 8}px`,
-          }}
+          style={getMenuStyle()}
         >
           <div className="p-1.5">
             {menuOptions.map((option) => (

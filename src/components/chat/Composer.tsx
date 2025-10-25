@@ -4,6 +4,7 @@ import useChatStore from '@/lib/store';
 import { useTheme } from '@/lib/ThemeProvider';
 import { checkMessageLimit, incrementMessageCount } from '@/lib/subscription-utils';
 import UpgradeModal from '../ui/UpgradeModal';
+import AttachmentMenu from './AttachmentMenu';
 
 interface ComposerProps {
   globalMousePosition: { x: number; y: number };
@@ -22,6 +23,8 @@ const Composer: React.FC<ComposerProps> = ({ globalMousePosition, isMouseInChatA
   const [isMouseOverInput, setIsMouseOverInput] = useState(false);
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
   const [upgradeReason, setUpgradeReason] = useState<{ remaining: number; limit: number }>({ remaining: 0, limit: 0 });
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const plusButtonRef = useRef<HTMLButtonElement>(null);
 
   const handleSend = async () => {
     if (!input.trim() || isStreaming) return;
@@ -245,18 +248,28 @@ const Composer: React.FC<ComposerProps> = ({ globalMousePosition, isMouseInChatA
 
           <div className="flex items-center w-full pl-1.5">
             <button
-              onClick={() => {
-                // 预留功能：上传文件、添加附件等
-                console.log('Plus button clicked');
-              }}
+              ref={plusButtonRef}
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
               className="flex-shrink-0 p-2 rounded-full transition-colors hover:bg-white/5"
               title="添加附件"
+              disabled={isStreaming}
             >
               <Plus
                 className="w-5 h-5"
                 style={{ color: isFocused ? providerColor : "#6B7280" }}
               />
             </button>
+
+            <AttachmentMenu
+              isOpen={isMenuOpen}
+              onClose={() => setIsMenuOpen(false)}
+              onSelectOption={(option) => {
+                console.log('选中功能:', option);
+                setIsMenuOpen(false);
+              }}
+              triggerRect={plusButtonRef.current?.getBoundingClientRect()}
+              position="top"
+            />
 
             <textarea
               value={input}

@@ -42,7 +42,7 @@ const HomePage: React.FC<HomePageProps> = ({ providerColor }) => {
 
       {/* 输入区 */}
       <div className="w-full max-w-3xl mb-8">
-        <InputBox providerColor={providerColor} onSend={handleSend} />
+        <InputBox providerColor={providerColor} onSend={handleSend} menuPosition="bottom" />
       </div>
 
       {/* 快捷建议 */}
