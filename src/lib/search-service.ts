@@ -104,7 +104,7 @@ export async function generateSearchPlan(
           messages: [
             {
               role: 'system',
-              content: `你是 Firecrawl 搜索专家。根据用户问题和 API 文档，设计最优搜索策略。
+              content: `你是 Firecrawl 搜索专家。根据用户问题和 API 文档，完全自主设计最优搜索策略。
 
 ${FIRECRAWL_DOC}
 
@@ -113,7 +113,7 @@ ${FIRECRAWL_DOC}
   "searches": [
     {
       "query": "搜索词",
-      "limit": 12,
+      "limit": 数字,
       "sources": ["web"],
       "categories": ["github"],
       "tbs": "qdr:d",
@@ -123,12 +123,29 @@ ${FIRECRAWL_DOC}
   ]
 }
 
-要求：
-1. 最多2个搜索请求
-2. 根据问题类型选择合适的参数（实时新闻用tbs，技术问题用categories等）
-3. 每个搜索limit设为10-15之间
-4. scrapeContent默认为true
-5. 只返回JSON，不要其他文字`,
+策略指南：
+1. **搜索数量**：根据问题复杂度决定（1-5个都可以）
+   - 简单问题：1个搜索即可
+   - 复杂问题：多个角度搜索
+   - 对比类问题：每个对象一个搜索
+
+2. **结果数量limit**：根据需要灵活调整
+   - 快速回答：5-10条
+   - 深度分析：15-30条
+   - 全面调研：30-50条
+
+3. **参数选择**：智能使用所有可用参数
+   - 实时信息：tbs时间过滤
+   - 技术问题：categories选择github/research
+   - 新闻：sources选择news
+   - 图片：sources选择images
+   - 地理相关：location指定地区
+
+4. **内容抓取**：根据问题决定
+   - 需要详细内容：scrapeContent=true
+   - 只需概览：scrapeContent=false
+
+你可以完全自由决定所有参数，目标是获取最准确、最全面的信息。只返回JSON，不要其他文字。`,
             },
             {
               role: 'user',
@@ -136,8 +153,8 @@ ${FIRECRAWL_DOC}
             },
           ],
           model: GEMINI_FLASH_MODEL,
-          temperature: 0.3,
-          max_tokens: 300,
+          temperature: 0.5,
+          max_tokens: 800,
           stream: false,
         }),
       }
