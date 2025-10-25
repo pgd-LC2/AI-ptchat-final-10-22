@@ -53,7 +53,7 @@ const AttachmentMenu: React.FC<AttachmentMenuProps> = ({ isOpen, onClose, onSele
           animate={{ opacity: 1, y: 0, scale: 1 }}
           exit={{ opacity: 0, y: -10, scale: 0.95 }}
           transition={{ duration: 0.15 }}
-          className="fixed z-50 glass-card rounded-xl border border-white/10 shadow-2xl overflow-hidden"
+          className="fixed z-50 glass-card rounded-2xl border border-white/10 shadow-2xl overflow-hidden"
           style={{
             top: position.top,
             left: position.left,

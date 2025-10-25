@@ -93,15 +93,24 @@ const InputBox: React.FC<InputBoxProps> = ({
   return (
     <div className="w-full relative">
       <div className="glass-card rounded-full border border-white/10 p-1.5 flex items-center hover:border-white/20 focus-within:border-white/30 transition-all duration-300">
-        <button
-          ref={plusButtonRef}
-          onClick={() => setIsMenuOpen(!isMenuOpen)}
-          className="flex-shrink-0 p-2 ml-1 rounded-full transition-colors hover:bg-white/5"
-          title="添加附件"
-          disabled={isSearching || isStreaming}
-        >
-          <Plus className="w-5 h-5 text-gray-500" />
-        </button>
+        <div className="relative">
+          <button
+            ref={plusButtonRef}
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+            className="flex-shrink-0 p-2 ml-1 rounded-full transition-colors hover:bg-white/5"
+            title="添加附件"
+            disabled={isSearching || isStreaming}
+          >
+            <Plus className="w-5 h-5 text-gray-500" />
+          </button>
+
+          <AttachmentMenu
+            isOpen={isMenuOpen}
+            onClose={() => setIsMenuOpen(false)}
+            onSelectOption={handleMenuOption}
+            triggerRect={plusButtonRef.current?.getBoundingClientRect()}
+          />
+        </div>
         <textarea
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
@@ -133,13 +142,6 @@ const InputBox: React.FC<InputBoxProps> = ({
           <Send className="w-5 h-5 text-white" />
         </button>
       </div>
-
-      <AttachmentMenu
-        isOpen={isMenuOpen}
-        onClose={() => setIsMenuOpen(false)}
-        onSelectOption={handleMenuOption}
-        triggerRect={plusButtonRef.current?.getBoundingClientRect()}
-      />
     </div>
   );
 };
