@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { Send, Plus } from 'lucide-react';
+import { Send, Plus, X } from 'lucide-react';
 import AttachmentMenu from './AttachmentMenu';
 import useChatStore from '@/lib/store';
 import { performWebSearch, formatSearchResults } from '@/lib/search-service';
@@ -18,6 +18,7 @@ const InputBox: React.FC<InputBoxProps> = ({
   const [inputValue, setInputValue] = useState('');
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSearching, setIsSearching] = useState(false);
+  const [selectedFeature, setSelectedFeature] = useState<'search' | 'file' | 'image' | 'code' | 'link' | null>(null);
   const plusButtonRef = useRef<HTMLButtonElement>(null);
   const sendMessage = useChatStore((state) => state.sendMessage);
   const isStreaming = useChatStore((state) => state.isStreaming);
@@ -25,12 +26,15 @@ const InputBox: React.FC<InputBoxProps> = ({
   const handleSend = async () => {
     if (!inputValue.trim() || isStreaming || isSearching) return;
 
-    if (onSend) {
+    if (selectedFeature === 'search') {
+      await handleWebSearch();
+    } else if (onSend) {
       onSend(inputValue.trim());
     } else {
       await sendMessage(inputValue.trim());
     }
     setInputValue('');
+    setSelectedFeature(null);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
@@ -57,7 +61,6 @@ const InputBox: React.FC<InputBoxProps> = ({
         const enhancedMessage = `请基于以下搜索结果回答问题：${inputValue.trim()}\n\n${formattedResults}`;
 
         await sendMessage(enhancedMessage);
-        setInputValue('');
       } else {
         console.error('搜索失败:', searchResult.error);
         alert('搜索失败，请稍后重试');
@@ -71,9 +74,11 @@ const InputBox: React.FC<InputBoxProps> = ({
   };
 
   const handleMenuOption = (option: 'search' | 'file' | 'image' | 'code' | 'link') => {
+    setSelectedFeature(option);
+
     switch (option) {
       case 'search':
-        handleWebSearch();
+        // 用户可以继续输入，点击发送时再执行搜索
         break;
       case 'file':
         console.log('上传文件功能开发中');
@@ -90,8 +95,44 @@ const InputBox: React.FC<InputBoxProps> = ({
     }
   };
 
+  const getFeatureLabel = (feature: 'search' | 'file' | 'image' | 'code' | 'link') => {
+    const labels = {
+      search: '研究',
+      file: '文件',
+      image: '图片',
+      code: '代理',
+      link: '源'
+    };
+    return labels[feature];
+  };
+
+  const getFeatureIcon = (feature: 'search' | 'file' | 'image' | 'code' | 'link') => {
+    const icons = {
+      search: '🔍',
+      file: '📎',
+      image: '🖼️',
+      code: '💻',
+      link: '🔗'
+    };
+    return icons[feature];
+  };
+
   return (
     <div className="w-full relative">
+      {selectedFeature && (
+        <div className="mb-2 flex items-center gap-2">
+          <div className="glass-card rounded-lg border border-white/10 px-3 py-2 flex items-center gap-2 group hover:border-white/20 transition-all">
+            <span className="text-base">{getFeatureIcon(selectedFeature)}</span>
+            <span className="text-sm text-blue-400 font-medium">{getFeatureLabel(selectedFeature)}</span>
+            <button
+              onClick={() => setSelectedFeature(null)}
+              className="p-0.5 rounded-full hover:bg-white/10 transition-colors ml-1"
+            >
+              <X className="w-3.5 h-3.5 text-gray-400 group-hover:text-gray-300" />
+            </button>
+          </div>
+        </div>
+      )}
       <div className="glass-card rounded-full border border-white/10 p-1.5 flex items-center hover:border-white/20 focus-within:border-white/30 transition-all duration-300">
         <button
           ref={plusButtonRef}
