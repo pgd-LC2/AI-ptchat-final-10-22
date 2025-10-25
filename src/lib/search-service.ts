@@ -311,7 +311,8 @@ export function formatSearchResults(results: any[]): string {
   let formatted = '# 搜索结果\n\n';
 
   results.forEach((result, index) => {
-    formatted += `## ${index + 1}. ${result.title || '无标题'}\n`;
+    const citationNumber = index + 1;
+    formatted += `## [${citationNumber}] ${result.title || '无标题'}\n`;
     formatted += `**链接**: ${result.url}\n\n`;
 
     if (result.description) {

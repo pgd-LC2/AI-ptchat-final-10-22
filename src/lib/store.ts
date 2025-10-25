@@ -211,13 +211,14 @@ const useChatStore = create<ChatState>()(
         console.log('🔍 搜索判断:', searchCheck);
 
         let searchContext = '';
+        let searchResults: any[] = [];
         if (searchCheck.needsSearch) {
           // 让 Gemini Flash 根据 Firecrawl API 文档自动生成最优搜索策略
           const searchPlan = await generateSearchPlan(content, conversationHistory);
           console.log('🔍 生成的搜索计划:', searchPlan);
 
           // 执行搜索计划
-          const searchResults = await performSearchPlan(searchPlan);
+          searchResults = await performSearchPlan(searchPlan);
 
           if (searchResults.length > 0) {
             searchContext = formatSearchResults(searchResults);
@@ -247,11 +248,30 @@ const useChatStore = create<ChatState>()(
 
           // 如果有搜索结果，添加到系统消息
           if (searchContext) {
+            const urlList = searchResults.map((r, i) => `[${i + 1}] ${r.url}`).join('\n');
+            const example1 = searchResults[0]?.url || '#';
+            const example2 = searchResults[1]?.url || '#';
+            const example3 = searchResults[2]?.url || '#';
+
             chatMessages.unshift({
               role: 'system',
               content: `以下是最新的网络搜索结果，请基于这些信息回答用户的问题：
 
-${searchContext}`,
+${searchContext}
+
+重要：当你引用搜索结果中的信息时，必须使用 Markdown 链接格式来标注信息来源。格式为：` + '[[数字]](URL)' + `
+
+搜索结果的URL列表：
+${urlList}
+
+引用示例：
+- "根据最新报道` + `[[1]](${example1})` + `，该事件发生在..."
+- "研究表明` + `[[2]](${example2})[[3]](${example3})` + `，这种方法可以..."
+
+注意：
+1. 必须使用 ` + '[[数字]](URL)' + ` 格式，不要使用普通的 [数字]
+2. URL 必须从上面的列表中选择对应的链接
+3. 可以连续使用多个引用，如 ` + '[[1]](url1)[[2]](url2)',
             });
           }
           

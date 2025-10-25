@@ -220,16 +220,37 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({ message, isLastAssistantM
                         {children}
                       </td>
                     ),
-                    a: ({ href, children }) => (
-                      <a 
-                        href={href} 
-                        target="_blank" 
-                        rel="noopener noreferrer"
-                        className="text-neon-cyan hover:text-neon-cyan/80 underline transition-colors"
-                      >
-                        {children}
-                      </a>
-                    ),
+                    a: ({ href, children }) => {
+                      const text = extractTextFromChildren(children);
+                      const isCitation = /^\[\d+\]$/.test(text);
+
+                      if (isCitation) {
+                        return (
+                          <sup>
+                            <a
+                              href={href}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 mx-0.5 text-[10px] font-semibold bg-neon-cyan/20 text-neon-cyan border border-neon-cyan/50 rounded hover:bg-neon-cyan/30 hover:border-neon-cyan transition-all no-underline"
+                              title="点击查看来源"
+                            >
+                              {text.replace(/[\[\]]/g, '')}
+                            </a>
+                          </sup>
+                        );
+                      }
+
+                      return (
+                        <a
+                          href={href}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-neon-cyan hover:text-neon-cyan/80 underline transition-colors"
+                        >
+                          {children}
+                        </a>
+                      );
+                    },
                     strong: ({ children }) => <strong className="font-semibold text-white">{children}</strong>,
                     em: ({ children }) => <em className="italic text-gray-300">{children}</em>,
                     hr: () => <hr className="border-t border-white/20 my-4" />,
