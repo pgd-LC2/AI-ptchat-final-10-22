@@ -99,12 +99,21 @@ export async function generateSearchQueries(
     const content = data.choices?.[0]?.message?.content || '';
 
     try {
-      const parsed = JSON.parse(content);
+      // 清理 Markdown 代码块标记
+      let cleanContent = content.trim();
+      if (cleanContent.startsWith('```json')) {
+        cleanContent = cleanContent.replace(/^```json\s*/, '').replace(/\s*```$/, '');
+      } else if (cleanContent.startsWith('```')) {
+        cleanContent = cleanContent.replace(/^```\s*/, '').replace(/\s*```$/, '');
+      }
+
+      const parsed = JSON.parse(cleanContent);
       if (parsed.queries && Array.isArray(parsed.queries) && parsed.queries.length > 0) {
         return parsed.queries.slice(0, 5);
       }
     } catch (e) {
       console.error('解析搜索查询JSON失败:', e);
+      console.error('原始内容:', content);
     }
 
     return [userQuery];
@@ -137,6 +146,7 @@ export async function performSingleSearch(
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
         },
         body: JSON.stringify(searchPayload),
       }
