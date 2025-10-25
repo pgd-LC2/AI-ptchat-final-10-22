@@ -1,4 +1,4 @@
-const GEMINI_FLASH_MODEL = 'google/gemini-2.5-flash-lite-preview-09-2025';
+const GEMINI_FLASH_MODEL = 'google/gemini-2.5-flash';
 
 export interface SearchOptions {
   query: string;
@@ -52,7 +52,10 @@ export async function checkSearchNeed(
   }
 }
 
-export async function summarizeQuery(userQuery: string): Promise<string> {
+export async function generateSearchQueries(
+  userQuery: string,
+  conversationHistory: Array<{ role: string; content: string }> = []
+): Promise<string[]> {
   try {
     const response = await fetch(
       `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/openrouter-chat`,
@@ -66,45 +69,63 @@ export async function summarizeQuery(userQuery: string): Promise<string> {
           messages: [
             {
               role: 'system',
-              content: '你是一个搜索查询优化助手。请将用户的问题总结成简洁的搜索关键词，只返回关键词本身，不要额外的解释。',
+              content: `你是一个搜索查询生成助手。基于用户的问题和对话历史，生成3-5个不同角度的搜索查询，以便全面获取相关信息。
+
+要求：
+1. 每个查询应该从不同角度切入问题
+2. 查询应该简洁明了，适合搜索引擎
+3. 返回JSON格式：{"queries": ["查询1", "查询2", "查询3"]}
+4. 至少3个，最多5个查询`,
             },
+            ...conversationHistory.slice(-3),
             {
               role: 'user',
-              content: `请将以下问题总结成适合网络搜索的关键词：\n\n${userQuery}`,
+              content: `请为以下问题生成多个搜索查询：\n\n${userQuery}`,
             },
           ],
           model: GEMINI_FLASH_MODEL,
-          temperature: 0.3,
-          max_tokens: 100,
+          temperature: 0.5,
+          max_tokens: 300,
           stream: false,
         }),
       }
     );
 
     if (!response.ok) {
-      throw new Error('查询总结失败');
+      throw new Error('生成搜索查询失败');
     }
 
     const data = await response.json();
-    const summary = data.choices?.[0]?.message?.content || userQuery;
+    const content = data.choices?.[0]?.message?.content || '';
 
-    return summary.trim();
+    try {
+      const parsed = JSON.parse(content);
+      if (parsed.queries && Array.isArray(parsed.queries) && parsed.queries.length > 0) {
+        return parsed.queries.slice(0, 5);
+      }
+    } catch (e) {
+      console.error('解析搜索查询JSON失败:', e);
+    }
+
+    return [userQuery];
   } catch (error) {
-    console.error('查询总结错误:', error);
-    return userQuery;
+    console.error('生成搜索查询错误:', error);
+    return [userQuery];
   }
 }
 
-export async function performWebSearch(options: SearchOptions): Promise<SearchResult> {
+export async function performSingleSearch(
+  query: string,
+  limit: number = 3,
+  scrapeContent: boolean = true
+): Promise<any[]> {
   try {
-    const searchQuery = await summarizeQuery(options.query);
-
     const searchPayload: any = {
-      query: searchQuery,
-      limit: options.limit || 5,
+      query,
+      limit,
     };
 
-    if (options.scrapeContent) {
+    if (scrapeContent) {
       searchPayload.scrapeOptions = {
         formats: ['markdown'],
       };
@@ -131,10 +152,56 @@ export async function performWebSearch(options: SearchOptions): Promise<SearchRe
       throw new Error(result.error || '搜索失败');
     }
 
+    return result.data?.web || [];
+  } catch (error) {
+    console.error('单次搜索错误:', error);
+    return [];
+  }
+}
+
+export async function performMultipleSearches(
+  queries: string[],
+  limitPerQuery: number = 3,
+  scrapeContent: boolean = true
+): Promise<any[]> {
+  try {
+    console.log('🔍 并行搜索查询:', queries);
+
+    const searchPromises = queries.map(query =>
+      performSingleSearch(query, limitPerQuery, scrapeContent)
+    );
+
+    const results = await Promise.all(searchPromises);
+
+    const allResults = results.flat();
+
+    const uniqueResults = allResults.reduce((acc, result) => {
+      if (!acc.some((r: any) => r.url === result.url)) {
+        acc.push(result);
+      }
+      return acc;
+    }, [] as any[]);
+
+    console.log('🔍 并行搜索完成，共', uniqueResults.length, '条结果');
+    return uniqueResults;
+  } catch (error) {
+    console.error('多重搜索错误:', error);
+    return [];
+  }
+}
+
+export async function performWebSearch(options: SearchOptions): Promise<SearchResult> {
+  try {
+    const results = await performSingleSearch(
+      options.query,
+      options.limit || 5,
+      options.scrapeContent || false
+    );
+
     return {
       success: true,
-      searchQuery,
-      results: result.data?.web || [],
+      searchQuery: options.query,
+      results,
     };
   } catch (error) {
     console.error('网络搜索错误:', error);

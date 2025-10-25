@@ -5,7 +5,7 @@ import { Message, Conversation, ProviderId, MessageImage } from '@/types';
 import { streamResponse, handleStreamResponse } from '@/lib/api';
 import { ChatMessage } from '@/types';
 import { getOpenRouterModelName } from '@/lib/model-mapping';
-import { checkSearchNeed, performWebSearch, formatSearchResults } from '@/lib/search-service';
+import { checkSearchNeed, generateSearchQueries, performMultipleSearches, formatSearchResults } from '@/lib/search-service';
 
 interface ChatState {
   conversations: Record<string, Conversation>;
@@ -201,26 +201,16 @@ const useChatStore = create<ChatState>()(
 
         let searchContext = '';
         if (searchCheck.needsSearch) {
-          // 添加一条搜索提示消息
-          const searchingMessage: Message = {
-            id: `msg_${Date.now()}_search`,
-            role: 'assistant',
-            content: `🔍 正在搜索相关信息...
-原因: ${searchCheck.reason || '需要实时信息'}`,
-            createdAt: new Date(),
-          };
-          addMessage(conversationId, searchingMessage);
+          // 生成多个搜索查询
+          const searchQueries = await generateSearchQueries(content, conversationHistory);
+          console.log('🔍 生成的搜索查询:', searchQueries);
 
-          // 执行搜索
-          const searchResult = await performWebSearch({
-            query: searchCheck.suggestedQuery || content,
-            limit: 5,
-            scrapeContent: true,
-          });
+          // 并行搜索所有查询
+          const searchResults = await performMultipleSearches(searchQueries, 3, true);
 
-          if (searchResult.success && searchResult.results) {
-            searchContext = formatSearchResults(searchResult.results);
-            console.log('🔍 搜索结果:', searchResult.results.length, '条');
+          if (searchResults.length > 0) {
+            searchContext = formatSearchResults(searchResults);
+            console.log('🔍 搜索完成，共', searchResults.length, '条结果');
           }
         }
 
@@ -241,12 +231,11 @@ const useChatStore = create<ChatState>()(
             throw new Error('Conversation not found');
           }
 
-          // 构建消息历史（排除刚添加的助手空消息和搜索提示消息）
+          // 构建消息历史（排除刚添加的助手空消息）
           const chatMessages: ChatMessage[] = currentConversation.messages
             .filter(msg => {
-              // 排除空助手消息和搜索提示消息
+              // 排除空助手消息
               if (msg.role === 'assistant' && msg.content === '') return false;
-              if (msg.id.includes('_search')) return false;
               return true;
             })
             .map(msg => ({
