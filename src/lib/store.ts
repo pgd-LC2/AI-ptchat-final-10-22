@@ -201,13 +201,13 @@ const useChatStore = create<ChatState>()(
 
         let searchContext = '';
         if (searchCheck.needsSearch) {
-          // 生成多个搜索查询（限制2-3个）
+          // 生成多个搜索查询（限制2个精准查询）
           const searchQueries = await generateSearchQueries(content, conversationHistory);
           console.log('🔍 生成的搜索查询:', searchQueries);
 
-          // 并行搜索（最多3个查询，每个2条结果，不抓取完整内容）
-          const limitedQueries = searchQueries.slice(0, 3);
-          const searchResults = await performMultipleSearches(limitedQueries, 2, false);
+          // 并行搜索（最多2个查询，每个3条结果，抓取完整内容）
+          const limitedQueries = searchQueries.slice(0, 2);
+          const searchResults = await performMultipleSearches(limitedQueries, 3, true);
 
           if (searchResults.length > 0) {
             searchContext = formatSearchResults(searchResults);

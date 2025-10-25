@@ -69,22 +69,23 @@ export async function generateSearchQueries(
           messages: [
             {
               role: 'system',
-              content: `你是一个搜索查询生成助手。基于用户的问题，生成2-3个精准的搜索查询。
+              content: `你是一个搜索查询优化助手。生成2个高质量的搜索查询，确保能获取最相关的信息。
 
 要求：
-1. 简短精准，直击核心关键词
-2. 返回JSON格式：{"queries": ["查询1", "查询2"]}
-3. 只生成2-3个查询`,
+1. 第一个查询：直接、精准的核心关键词
+2. 第二个查询：换个角度或补充细节
+3. 返回JSON格式：{"queries": ["核心查询", "补充查询"]}
+4. 每个查询5-10个字`,
             },
-            ...conversationHistory.slice(-2),
+            ...conversationHistory.slice(-1),
             {
               role: 'user',
               content: userQuery,
             },
           ],
           model: GEMINI_FLASH_MODEL,
-          temperature: 0.3,
-          max_tokens: 150,
+          temperature: 0.2,
+          max_tokens: 100,
           stream: false,
         }),
       }
