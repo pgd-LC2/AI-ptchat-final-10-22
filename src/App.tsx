@@ -17,8 +17,8 @@ const ChatApp: React.FC = () => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.4 }}
-      className="h-screen w-screen bg-dark-bg-end flex overflow-hidden"
-      style={{ position: 'fixed', top: 0, left: 0 }}
+      className="h-screen w-screen flex overflow-hidden"
+      style={{ position: 'fixed', top: 0, left: 0, zIndex: 2 }}
     >
       <Particles />
       <div className="relative flex w-full h-full">
