@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { Send, Plus, X } from 'lucide-react';
+import { Send, Plus, X, Loader2 } from 'lucide-react';
 import AttachmentMenu from './AttachmentMenu';
 import useChatStore from '@/lib/store';
 import { performWebSearch, formatSearchResults } from '@/lib/search-service';
@@ -181,7 +181,11 @@ const InputBox: React.FC<InputBoxProps> = ({
             background: inputValue.trim() && !isSearching && !isStreaming ? providerColor : 'rgba(255, 255, 255, 0.08)',
           }}
         >
-          <Send className="w-5 h-5 text-white" />
+          {isSearching || isStreaming ? (
+            <Loader2 className="w-5 h-5 text-white animate-spin" />
+          ) : (
+            <Send className="w-5 h-5 text-white" />
+          )}
         </button>
       </div>
     </div>
