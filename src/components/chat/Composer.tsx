@@ -243,7 +243,7 @@ const Composer: React.FC<ComposerProps> = ({ globalMousePosition, isMouseInChatA
             </>
           )}
 
-          <div className="flex items-center w-full pl-3">
+          <div className="flex items-center w-full pl-1.5">
             <button
               onClick={() => {
                 // 预留功能：上传文件、添加附件等
