@@ -1,5 +1,5 @@
 import React, { useRef, useEffect } from 'react';
-import { Paperclip, Search, Image, Code, Link as LinkIcon, MoreHorizontal } from 'lucide-react';
+import { Paperclip, Search, Image, Code, Link as LinkIcon, MoveHorizontal as MoreHorizontal } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface AttachmentMenuProps {
