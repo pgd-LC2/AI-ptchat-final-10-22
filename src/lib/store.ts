@@ -5,7 +5,7 @@ import { Message, Conversation, ProviderId, MessageImage } from '@/types';
 import { streamResponse, handleStreamResponse } from '@/lib/api';
 import { ChatMessage } from '@/types';
 import { getOpenRouterModelName } from '@/lib/model-mapping';
-import { checkSearchNeed, generateSearchQueries, performMultipleSearches, formatSearchResults } from '@/lib/search-service';
+import { checkSearchNeed, generateSearchPlan, performSearchPlan, formatSearchResults } from '@/lib/search-service';
 
 interface ChatState {
   conversations: Record<string, Conversation>;
@@ -201,13 +201,12 @@ const useChatStore = create<ChatState>()(
 
         let searchContext = '';
         if (searchCheck.needsSearch) {
-          // 生成多个搜索查询（限制2个精准查询）
-          const searchQueries = await generateSearchQueries(content, conversationHistory);
-          console.log('🔍 生成的搜索查询:', searchQueries);
+          // 让 Gemini Flash 根据 Firecrawl API 文档自动生成最优搜索策略
+          const searchPlan = await generateSearchPlan(content, conversationHistory);
+          console.log('🔍 生成的搜索计划:', searchPlan);
 
-          // 并行搜索（最多2个查询，每个3条结果，抓取完整内容）
-          const limitedQueries = searchQueries.slice(0, 2);
-          const searchResults = await performMultipleSearches(limitedQueries, 3, true);
+          // 执行搜索计划
+          const searchResults = await performSearchPlan(searchPlan);
 
           if (searchResults.length > 0) {
             searchContext = formatSearchResults(searchResults);
