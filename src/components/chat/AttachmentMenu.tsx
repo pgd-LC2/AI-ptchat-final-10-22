@@ -61,7 +61,7 @@ const AttachmentMenu: React.FC<AttachmentMenuProps> = ({ isOpen, onClose, onSele
                   onSelectOption(option.id as any);
                   onClose();
                 }}
-                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/5 transition-colors text-left group"
+                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-full hover:bg-white/5 transition-colors text-left group"
               >
                 <option.icon className="w-5 h-5 text-gray-400 group-hover:text-white transition-colors flex-shrink-0" />
                 <span className="text-sm text-gray-200 group-hover:text-white transition-colors flex-1">
@@ -78,7 +78,7 @@ const AttachmentMenu: React.FC<AttachmentMenuProps> = ({ isOpen, onClose, onSele
             <div className="h-px bg-white/5 my-1.5" />
 
             <button
-              className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/5 transition-colors text-left group"
+              className="w-full flex items-center gap-3 px-3 py-2.5 rounded-full hover:bg-white/5 transition-colors text-left group"
               onClick={onClose}
             >
               <MoreHorizontal className="w-5 h-5 text-gray-400 group-hover:text-white transition-colors flex-shrink-0" />
