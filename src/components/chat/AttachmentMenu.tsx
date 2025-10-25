@@ -29,11 +29,11 @@ const AttachmentMenu: React.FC<AttachmentMenuProps> = ({ isOpen, onClose, onSele
   }, [isOpen, onClose]);
 
   const menuOptions = [
-    { id: 'file', icon: Paperclip, label: '添加照片和文件', description: '上传本地文件' },
-    { id: 'search', icon: Search, label: '深度研究', description: '联网搜索相关内容' },
-    { id: 'image', icon: Image, label: '创建图片', description: '生成 AI 图片' },
-    { id: 'code', icon: Code, label: '代理模式', description: '执行代码任务' },
-    { id: 'link', icon: LinkIcon, label: '添加源', description: '添加网页链接' },
+    { id: 'file', icon: Paperclip, label: '添加照片和文件', shortcut: 'Ctrl + U' },
+    { id: 'search', icon: Search, label: '深度研究' },
+    { id: 'image', icon: Image, label: '创建图片' },
+    { id: 'code', icon: Code, label: '代理模式' },
+    { id: 'link', icon: LinkIcon, label: '添加源' },
   ];
 
   const position = triggerRect ? {
@@ -60,7 +60,7 @@ const AttachmentMenu: React.FC<AttachmentMenuProps> = ({ isOpen, onClose, onSele
             minWidth: '280px',
           }}
         >
-          <div className="p-2">
+          <div className="p-1.5">
             {menuOptions.map((option) => (
               <button
                 key={option.id}
@@ -68,36 +68,33 @@ const AttachmentMenu: React.FC<AttachmentMenuProps> = ({ isOpen, onClose, onSele
                   onSelectOption(option.id as any);
                   onClose();
                 }}
-                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-white/5 transition-colors text-left group"
+                className="w-full flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-white/5 transition-colors text-left group"
               >
-                <div className="flex-shrink-0 w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center group-hover:bg-white/10 transition-colors">
-                  <option.icon className="w-4 h-4 text-gray-400 group-hover:text-white transition-colors" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="text-sm font-medium text-white group-hover:text-white transition-colors">
-                    {option.label}
-                  </div>
-                  <div className="text-xs text-gray-500 group-hover:text-gray-400 transition-colors truncate">
-                    {option.description}
-                  </div>
-                </div>
+                <option.icon className="w-5 h-5 text-gray-400 group-hover:text-white transition-colors flex-shrink-0" />
+                <span className="text-sm text-gray-200 group-hover:text-white transition-colors flex-1">
+                  {option.label}
+                </span>
+                {option.shortcut && (
+                  <span className="text-xs text-gray-500 group-hover:text-gray-400 transition-colors flex-shrink-0">
+                    {option.shortcut}
+                  </span>
+                )}
               </button>
             ))}
 
-            <div className="h-px bg-white/5 my-2" />
+            <div className="h-px bg-white/5 my-1.5" />
 
             <button
-              className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-white/5 transition-colors text-left group"
+              className="w-full flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-white/5 transition-colors text-left group"
               onClick={onClose}
             >
-              <div className="flex-shrink-0 w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center group-hover:bg-white/10 transition-colors">
-                <MoreHorizontal className="w-4 h-4 text-gray-400 group-hover:text-white transition-colors" />
-              </div>
-              <div className="flex-1 min-w-0">
-                <div className="text-sm font-medium text-white group-hover:text-white transition-colors">
-                  更多
-                </div>
-              </div>
+              <MoreHorizontal className="w-5 h-5 text-gray-400 group-hover:text-white transition-colors flex-shrink-0" />
+              <span className="text-sm text-gray-200 group-hover:text-white transition-colors flex-1">
+                更多
+              </span>
+              <span className="text-gray-500 group-hover:text-gray-400 transition-colors">
+                →
+              </span>
             </button>
           </div>
         </motion.div>
