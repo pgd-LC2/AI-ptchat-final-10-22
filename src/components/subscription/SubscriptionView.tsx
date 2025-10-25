@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { ChevronLeft, Calendar, CreditCard, Zap, Clock, CheckCircle2, TrendingUp } from 'lucide-react';
+import { ChevronLeft, Calendar, CreditCard, Zap, Clock, CheckCircle2, TrendingUp, CreditCard as CreditCardIcon } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 import {
   getCurrentUserSubscription,
   getSubscriptionPlan,
@@ -15,6 +16,7 @@ interface SubscriptionViewProps {
 }
 
 const SubscriptionView: React.FC<SubscriptionViewProps> = ({ onBack }) => {
+  const navigate = useNavigate();
   const [subscription, setSubscription] = useState<UserSubscription | null>(null);
   const [plan, setPlan] = useState<SubscriptionPlan | null>(null);
   const [usage, setUsage] = useState<UsageStats | null>(null);
@@ -212,6 +214,20 @@ const SubscriptionView: React.FC<SubscriptionViewProps> = ({ onBack }) => {
                   </div>
                 )}
               </div>
+            </div>
+
+            <div className="mt-4">
+              <button
+                onClick={() => navigate('/pricing')}
+                className="w-full glass-card rounded-full px-4 py-3 border border-white/10 hover:border-white/20 transition-all duration-300 group"
+              >
+                <div className="flex items-center justify-center gap-2">
+                  <CreditCardIcon className="w-4 h-4 text-gray-400 group-hover:text-gray-200 transition-colors" />
+                  <span className="text-gray-300 group-hover:text-white transition-colors font-medium">
+                    查看全部套餐
+                  </span>
+                </div>
+              </button>
             </div>
           </>
         )}
