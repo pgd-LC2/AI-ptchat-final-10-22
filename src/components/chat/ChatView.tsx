@@ -328,7 +328,7 @@ const ChatView: React.FC = () => {
               <ChatWindow />
               <div className="px-6 pb-6 flex-shrink-0">
                 <div className="w-full max-w-4xl mx-auto">
-                  <InputBox providerColor={providerColor} placeholder="Ask anything..." />
+                  <InputBox providerColor={providerColor} placeholder="Ask anything..." menuPosition="top" />
                 </div>
               </div>
             </div>
@@ -356,7 +356,7 @@ const ChatView: React.FC = () => {
             </div>
             <div className="px-6 pb-6 flex-shrink-0">
               <div className="w-full max-w-4xl mx-auto">
-                <InputBox providerColor={providerColor} placeholder="Ask anything..." />
+                <InputBox providerColor={providerColor} placeholder="Ask anything..." menuPosition="top" />
               </div>
             </div>
           </div>
