@@ -1,4 +1,4 @@
-const GEMINI_FLASH_MODEL = 'google/gemini-2.0-flash-lite-preview-09-2025';
+const GEMINI_FLASH_MODEL = 'google/gemini-2.5-flash-lite-preview-09-2025';
 
 export interface SearchOptions {
   query: string;
