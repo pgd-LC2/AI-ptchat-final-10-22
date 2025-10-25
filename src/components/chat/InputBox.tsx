@@ -93,7 +93,7 @@ const InputBox: React.FC<InputBoxProps> = ({
   return (
     <div className="w-full relative">
       <div className="glass-card rounded-full border border-white/10 p-1.5 flex items-center hover:border-white/20 focus-within:border-white/30 transition-all duration-300">
-        <div className="relative">
+        <div className="relative z-[100]">
           <button
             ref={plusButtonRef}
             onClick={() => setIsMenuOpen(!isMenuOpen)}

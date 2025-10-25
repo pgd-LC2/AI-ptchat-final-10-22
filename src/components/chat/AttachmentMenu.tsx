@@ -45,7 +45,7 @@ const AttachmentMenu: React.FC<AttachmentMenuProps> = ({ isOpen, onClose, onSele
           animate={{ opacity: 1, y: 0, scale: 1 }}
           exit={{ opacity: 0, y: -10, scale: 0.95 }}
           transition={{ duration: 0.15 }}
-          className="absolute left-0 top-full mt-2 z-[100] glass-card rounded-2xl border border-white/10 shadow-2xl overflow-hidden"
+          className="absolute left-0 top-full mt-2 z-[100] glass-card rounded-3xl border border-white/10 shadow-2xl overflow-hidden"
           style={{
             minWidth: '280px',
           }}
