@@ -121,7 +121,7 @@ const InputBox: React.FC<InputBoxProps> = ({
     <div className="w-full relative">
       {selectedFeature && (
         <div className="mb-2 flex items-center gap-2">
-          <div className="glass-card rounded-lg border border-white/10 px-3 py-2 flex items-center gap-2 group hover:border-white/20 transition-all">
+          <div className="glass-card rounded-full border border-white/10 px-3 py-1.5 flex items-center gap-2 group hover:border-white/20 transition-all">
             <span className="text-base">{getFeatureIcon(selectedFeature)}</span>
             <span className="text-sm text-blue-400 font-medium">{getFeatureLabel(selectedFeature)}</span>
             <button
