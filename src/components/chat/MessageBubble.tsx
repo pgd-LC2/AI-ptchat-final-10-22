@@ -141,6 +141,27 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({ message, isLastAssistantM
         )}
         style={{ userSelect: 'text', cursor: 'text' }}
       >
+        {/* 思考过程（展开时显示在最上方） */}
+        {hasReasoning && isReasoningVisible && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.3, ease: 'easeOut' }}
+            className="mb-4 pb-4 border-b border-white/10"
+          >
+            <div className="flex items-center gap-2 mb-2">
+              <div className="w-1 h-4 bg-neon-cyan rounded-full"></div>
+              <span className="text-xs font-medium text-neon-cyan uppercase tracking-wide">
+                思维过程
+              </span>
+            </div>
+            <div className="bg-black/20 rounded-lg p-3 text-sm text-gray-300 font-mono leading-relaxed">
+              <p className="whitespace-pre-wrap">{message.reasoning}</p>
+            </div>
+          </motion.div>
+        )}
+
         <div className="flex items-start justify-between gap-3">
           {isThinkingOnly ? (
             <p className="whitespace-pre-wrap flex-1 text-gray-400 italic">
@@ -266,26 +287,6 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({ message, isLastAssistantM
             </button>
           )}
         </div>
-        
-        {hasReasoning && isReasoningVisible && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.3, ease: 'easeOut' }}
-            className="mt-4 pt-4 border-t border-white/10"
-          >
-            <div className="flex items-center gap-2 mb-2">
-              <div className="w-1 h-4 bg-neon-cyan rounded-full"></div>
-              <span className="text-xs font-medium text-neon-cyan uppercase tracking-wide">
-                思维过程
-              </span>
-            </div>
-            <div className="bg-black/20 rounded-lg p-3 text-sm text-gray-300 font-mono leading-relaxed">
-              <p className="whitespace-pre-wrap">{message.reasoning}</p>
-            </div>
-          </motion.div>
-        )}
       </div>
       {isUser && (
         <div className="flex-shrink-0 w-8 h-8 rounded-full glass-card flex items-center justify-center ring-1 ring-neon-pink/50">
