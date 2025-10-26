@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import AuthLayout from './AuthLayout';
 import useAuthStore from '@/lib/auth-store';
 import { cn } from '@/lib/utils';
+import { staggeredContainer, floatUpItem } from '../ui/motion-presets';
 
 const LoginPage: React.FC = () => {
   const navigate = useNavigate();
@@ -56,12 +57,20 @@ const LoginPage: React.FC = () => {
       title="欢迎回来"
       subtitle="登录您的账户，继续与世界顶尖AI对话"
     >
-      <form onSubmit={handleSubmit} className="space-y-8" noValidate>
+      <motion.form
+        onSubmit={handleSubmit}
+        className="space-y-8"
+        noValidate
+        variants={staggeredContainer(0.1, 0.22)}
+        initial="hidden"
+        animate="show"
+      >
         {/* 错误提示 */}
         {error && (
           <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
+            variants={floatUpItem}
+            initial="hidden"
+            animate="show"
             role="alert"
             aria-live="polite"
             className="flex items-start gap-3 p-4 rounded-xl bg-red-500/8 border border-red-500/15 text-red-400 text-sm leading-relaxed"
@@ -72,7 +81,7 @@ const LoginPage: React.FC = () => {
         )}
 
         {/* 邮箱输入 */}
-        <div className="space-y-3">
+        <motion.div variants={floatUpItem} className="space-y-3">
           <label className="block text-sm font-medium text-gray-200 tracking-wide">
             邮箱地址
           </label>
@@ -96,10 +105,10 @@ const LoginPage: React.FC = () => {
               disabled={isLoading}
             />
           </div>
-        </div>
+        </motion.div>
 
         {/* 密码输入 */}
-        <div className="space-y-3">
+        <motion.div variants={floatUpItem} className="space-y-3">
           <label className="block text-sm font-medium text-gray-200 tracking-wide">
             密码
           </label>
@@ -135,10 +144,10 @@ const LoginPage: React.FC = () => {
               {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
             </button>
           </div>
-        </div>
+        </motion.div>
 
         {/* 登录按钮 */}
-        <button
+        <motion.button
           type="submit"
           disabled={isLoading || isSuccess || !formData.email || !formData.password}
           className={cn(
@@ -151,6 +160,7 @@ const LoginPage: React.FC = () => {
           )}
           aria-live="polite"
           aria-busy={isLoading}
+          variants={floatUpItem}
         >
           {isSuccess ? (
             <div className="flex items-center justify-center gap-2">
@@ -165,10 +175,10 @@ const LoginPage: React.FC = () => {
           ) : (
             '登录'
           )}
-        </button>
+        </motion.button>
 
         {/* 注册链接 */}
-        <div className="text-center text-sm text-gray-400 pt-4">
+        <motion.div variants={floatUpItem} className="text-center text-sm text-gray-400 pt-4">
           还没有账户？{' '}
           <Link
             to="/register"
@@ -179,8 +189,8 @@ const LoginPage: React.FC = () => {
           >
             立即注册
           </Link>
-        </div>
-      </form>
+        </motion.div>
+      </motion.form>
     </AuthLayout>
   );
 };

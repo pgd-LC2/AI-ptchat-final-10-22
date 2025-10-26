@@ -6,6 +6,7 @@ import PricingCard from './PricingCard';
 import BillingToggle from './BillingToggle';
 import { supabase } from '@/lib/supabase';
 import { cn } from '@/lib/utils';
+import { staggeredContainer, floatUpItem, subtleFade } from '../ui/motion-presets';
 
 interface SubscriptionPlan {
   id: string;
@@ -67,23 +68,25 @@ const PricingPage: React.FC = () => {
     <div className="min-h-screen bg-gradient-to-br from-dark-bg-start via-dark-bg-via to-dark-bg-end py-16 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-neon-purple/5 via-transparent to-transparent" />
 
-      <div className="max-w-7xl mx-auto relative z-10">
-        <button
+      <motion.div
+        className="max-w-7xl mx-auto relative z-10"
+        variants={staggeredContainer(0.12, 0.18)}
+        initial="hidden"
+        animate="show"
+      >
+        <motion.button
           onClick={() => navigate('/')}
           className={cn(
             'flex items-center gap-2 text-gray-400 hover:text-gray-200 transition-colors mb-8 px-4 py-2 rounded-full hover:bg-white/5',
             focusRing
           )}
+          variants={floatUpItem}
         >
           <ArrowLeft className="w-4 h-4" />
           <span className="text-sm">返回首页</span>
-        </button>
+        </motion.button>
 
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="text-center mb-16"
-        >
+        <motion.div variants={floatUpItem} className="text-center mb-16">
           <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/5 border border-white/10 rounded-full mb-6">
             <Sparkles className="w-4 h-4 text-neon-purple" />
             <span className="text-sm text-gray-300">选择最适合您的订阅方案</span>
@@ -99,9 +102,11 @@ const PricingPage: React.FC = () => {
           </p>
         </motion.div>
 
-        <BillingToggle isAnnual={isAnnual} onToggle={setIsAnnual} />
+        <motion.div variants={floatUpItem}>
+          <BillingToggle isAnnual={isAnnual} onToggle={setIsAnnual} />
+        </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-6 mb-16">
+        <motion.div variants={subtleFade} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-6 mb-16">
           {plans.map((plan, index) => (
             <PricingCard
               key={plan.id}
@@ -118,15 +123,10 @@ const PricingPage: React.FC = () => {
               delay={index * 0.1}
             />
           ))}
-        </div>
+        </motion.div>
 
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.5 }}
-          className="text-center space-y-6"
-        >
-          <div className="glass-card rounded-2xl border border-white/10 p-8 max-w-3xl mx-auto">
+        <motion.div variants={staggeredContainer(0.1, 0.18)} initial="hidden" animate="show" className="text-center space-y-6">
+          <motion.div variants={floatUpItem} className="glass-card rounded-2xl border border-white/10 p-8 max-w-3xl mx-auto">
             <h2 className="text-2xl font-bold text-gray-100 mb-4">企业定制方案</h2>
             <p className="text-gray-400 mb-6 leading-relaxed">
               如果您的团队规模超过 5 人，或需要更高的使用配额，我们可以为您量身定制专属方案。
@@ -139,14 +139,14 @@ const PricingPage: React.FC = () => {
             >
               联系我们
             </button>
-          </div>
+          </motion.div>
 
-          <div className="text-sm text-gray-500 space-y-2">
+          <motion.div variants={floatUpItem} className="text-sm text-gray-500 space-y-2">
             <p>所有订阅均支持随时取消，未使用部分按比例退款</p>
             <p>价格不含税，支持微信支付、支付宝、信用卡支付</p>
-          </div>
+          </motion.div>
         </motion.div>
-      </div>
+      </motion.div>
     </div>
   );
 };
