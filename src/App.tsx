@@ -11,7 +11,7 @@ import AuthGuard from './components/auth/AuthGuard';
 import Particles from './components/ui/Particles';
 import { ThemeProvider } from './lib/ThemeProvider';
 import RouteTransition from './components/ui/RouteTransition';
-import { staggeredContainer, floatUpItem } from './components/ui/motion-presets';
+import { staggerContainer, slideInFromLeft, slideInFromRight } from './lib/motion';
 
 const ChatApp: React.FC = () => {
   return (
@@ -21,16 +21,23 @@ const ChatApp: React.FC = () => {
     >
       <Particles />
       <motion.div
-        variants={staggeredContainer(0.14, 0.28)}
+        variants={staggerContainer(0.16, 0.28)}
         initial="hidden"
-        animate="show"
+        animate="visible"
+        exit="exit"
         className="relative flex w-full h-full"
         style={{ zIndex: 10 }}
       >
-        <motion.div variants={floatUpItem} className="h-full">
+        <motion.div
+          variants={slideInFromLeft}
+          className="h-full"
+        >
           <Sidebar />
         </motion.div>
-        <motion.div variants={floatUpItem} className="flex-1 h-full">
+        <motion.div
+          variants={slideInFromRight}
+          className="flex-1 h-full"
+        >
           <ChatView />
         </motion.div>
       </motion.div>
