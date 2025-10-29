@@ -23,11 +23,11 @@ const AuthGuard: React.FC<AuthGuardProps> = ({ children }) => {
       <div className="min-h-screen w-screen bg-dark-bg-end flex items-center justify-center relative overflow-hidden">
         <FlowImage
           src="/666-2.webp"
-          speed={0.3}
-          intensity={0.01}
-          scale={1.8}
-          hueShift={0.02}
-          className="pointer-events-none absolute inset-0 h-full w-full rounded-none shadow-none"
+          speed={0.28}
+          intensity={0.006}
+          scale={1.85}
+          hueShift={0}
+          className="pointer-events-none absolute inset-0 h-full w-full"
         />
         <div className="pointer-events-none absolute inset-0 bg-black/55 backdrop-blur-[40px]" />
         <div className="relative z-10 flex flex-col items-center">
