@@ -15,19 +15,29 @@ import FlowImage from './components/ui/FlowImage';
 
 const ChatApp: React.FC = () => {
   return (
-    <main
-      className="relative flex h-screen w-screen overflow-hidden"
-      style={{ position: 'fixed', top: 0, left: 0, zIndex: 10 }}
-    >
+    <main className="fixed inset-0 z-10 flex overflow-hidden bg-slate-950 text-slate-100">
       <div className="pointer-events-none absolute inset-0 -z-10">
         <FlowImage
           src="/666-2.webp"
-          speed={0.3}
-          intensity={0.01}
-          scale={1.8}
-          hueShift={0.02}
-          className="absolute inset-0 h-full w-full rounded-none shadow-none"
+          speed={0.42}
+          intensity={0.012}
+          scale={1.92}
+          hueShift={0.06}
+          className="absolute inset-0 h-full w-full"
         />
+        <motion.div
+          aria-hidden
+          className="pointer-events-none absolute inset-[-12%] mix-blend-screen opacity-70"
+          initial={{ backgroundPosition: '0% 0%' }}
+          animate={{ backgroundPosition: ['0% 0%', '100% 50%', '0% 100%'] }}
+          transition={{ duration: 32, repeat: Infinity, ease: 'linear' }}
+          style={{
+            backgroundImage:
+              'radial-gradient(35% 45% at 12% 18%, rgba(56, 189, 248, 0.22), transparent 60%), radial-gradient(48% 52% at 82% 20%, rgba(244, 114, 182, 0.24), transparent 65%), radial-gradient(60% 60% at 50% 82%, rgba(124, 58, 237, 0.22), transparent 70%)',
+            backgroundSize: '120% 120%',
+          }}
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-slate-950/70 via-slate-950/25 to-slate-950/80" />
       </div>
       <motion.div
         variants={staggerContainer(0.16, 0.28)}
@@ -51,10 +61,7 @@ const ChatApp: React.FC = () => {
           >
             <Sidebar />
           </motion.div>
-          <motion.div
-            variants={slideInFromRight}
-            className="flex-1 h-full"
-          >
+          <motion.div variants={slideInFromRight} className="relative z-10 flex-1 h-full">
             <ChatView />
           </motion.div>
         </div>
