@@ -260,10 +260,18 @@ const FlowImage: React.FC<FlowImageProps> = ({
       img.crossOrigin = 'anonymous';
       imgRef.current = img;
       img.onload = () => {
+        if (!progRef.current || texRef.current !== texture) {
+          return;
+        }
+
         gl.bindTexture(gl.TEXTURE_2D, texture);
         gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 0);
         gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img);
-        gl.useProgram(program);
+
+        const activeProgram = progRef.current;
+        if (!activeProgram) return;
+
+        gl.useProgram(activeProgram);
         gl.uniform1i(uLocsRef.current.u_tex, 0);
         gl.uniform2f(uLocsRef.current.u_imgResolution, img.width, img.height);
       };
@@ -281,7 +289,9 @@ const FlowImage: React.FC<FlowImageProps> = ({
           canvas.height = height;
         }
         gl.viewport(0, 0, canvas.width, canvas.height);
-        gl.useProgram(program);
+        const activeProgram = progRef.current;
+        if (!activeProgram) return;
+        gl.useProgram(activeProgram);
         gl.uniform2f(uLocsRef.current.u_resolution, canvas.width, canvas.height);
       };
 
@@ -301,8 +311,11 @@ const FlowImage: React.FC<FlowImageProps> = ({
           return;
         }
 
+        const activeProgram = progRef.current;
+        if (!activeProgram) return;
+
         const elapsed = (now - startTimeRef.current) * 0.001;
-        gl.useProgram(program);
+        gl.useProgram(activeProgram);
         gl.uniform1f(uLocsRef.current.u_time, elapsed);
         gl.uniform1f(uLocsRef.current.u_speed, speed);
         gl.uniform1f(uLocsRef.current.u_intensity, intensity);
@@ -340,6 +353,7 @@ const FlowImage: React.FC<FlowImageProps> = ({
         texRef.current = null;
       }
       if (progRef.current && gl) {
+        gl.useProgram(null);
         gl.deleteProgram(progRef.current);
         progRef.current = null;
       }
@@ -349,6 +363,7 @@ const FlowImage: React.FC<FlowImageProps> = ({
       if (fragmentShader) {
         gl.deleteShader(fragmentShader);
       }
+      imgRef.current = null;
     };
   }, [src, speed, intensity, scale, hueShift, play]);
 
