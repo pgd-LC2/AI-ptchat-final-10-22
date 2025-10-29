@@ -44,11 +44,21 @@ const ChatApp: React.FC = () => {
         initial="hidden"
         animate="visible"
         exit="exit"
-        className="relative z-10 flex h-full w-full"
+        className="relative flex h-full w-full"
+        style={{ zIndex: 10 }}
       >
-        <div className="absolute inset-0 pointer-events-none bg-gradient-to-br from-white/8 via-white/0 to-transparent" />
-        <div className="relative z-10 flex h-full w-full overflow-hidden border border-white/10 bg-white/[0.08] backdrop-blur-[42px] shadow-[0_70px_160px_-60px_rgba(8,16,32,0.85)]">
-          <motion.div variants={slideInFromLeft} className="relative z-10 h-full border-r border-white/10">
+        <div
+          className="pointer-events-none absolute inset-0 rounded-[40px] border border-white/10 bg-white/10 backdrop-blur-3xl shadow-[0_60px_160px_-60px_rgba(8,16,32,0.8)]"
+          style={{ zIndex: 8 }}
+        />
+        <div
+          className="relative flex h-full w-full overflow-hidden rounded-[28px] border border-white/10 bg-black/40 backdrop-blur-2xl shadow-[0_40px_120px_-50px_rgba(15,23,42,0.85)]"
+          style={{ zIndex: 9 }}
+        >
+          <motion.div
+            variants={slideInFromLeft}
+            className="h-full"
+          >
             <Sidebar />
           </motion.div>
           <motion.div variants={slideInFromRight} className="relative z-10 flex-1 h-full">
