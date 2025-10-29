@@ -100,7 +100,7 @@ export async function streamChatCompletion(
         "openai/gpt-4.1-mini",
         "openai/gpt-4o-mini",
         "openai/chatgpt-4o-latest",
-        "anthropic/claude-3.5-haiku",
+        "anthropic/claude-4.5-haiku",
         "anthropic/claude-opus-4-1",
         "anthropic/claude-sonnet-4-0",
         "anthropic/claude-3-7-sonnet-latest",
