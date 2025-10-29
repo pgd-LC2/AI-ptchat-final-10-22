@@ -8,10 +8,10 @@ import LoginPage from './components/auth/LoginPage';
 import RegisterPage from './components/auth/RegisterPage';
 import PricingPage from './components/pricing/PricingPage';
 import AuthGuard from './components/auth/AuthGuard';
-import Particles from './components/ui/Particles';
 import { ThemeProvider } from './lib/ThemeProvider';
 import RouteTransition from './components/ui/RouteTransition';
 import { staggerContainer, slideInFromLeft, slideInFromRight } from './lib/motion';
+import FlowImage from './components/ui/FlowImage';
 
 const ChatApp: React.FC = () => {
   return (
@@ -19,7 +19,16 @@ const ChatApp: React.FC = () => {
       className="relative flex h-screen w-screen overflow-hidden"
       style={{ position: 'fixed', top: 0, left: 0, zIndex: 10 }}
     >
-      <Particles />
+      <div className="pointer-events-none absolute inset-0 -z-10">
+        <FlowImage
+          src="/666-2.webp"
+          speed={0.3}
+          intensity={0.01}
+          scale={1.8}
+          hueShift={0.02}
+          className="absolute inset-0 h-full w-full rounded-none shadow-none"
+        />
+      </div>
       <motion.div
         variants={staggerContainer(0.16, 0.28)}
         initial="hidden"

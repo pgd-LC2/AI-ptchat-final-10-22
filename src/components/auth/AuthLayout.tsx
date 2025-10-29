@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import NeonCore from '../ui/NeonCore';
-import Particles from '../ui/Particles';
+import FlowImage from '../ui/FlowImage';
 import { flyInTop, staggeredContainer, floatUpItem } from '../ui/motion-presets';
 
 interface AuthLayoutProps {
@@ -13,8 +13,16 @@ interface AuthLayoutProps {
 const AuthLayout: React.FC<AuthLayoutProps> = ({ children, title, subtitle }) => {
   return (
     <div className="min-h-screen w-screen bg-dark-bg-end flex items-center justify-center relative overflow-hidden">
-      <Particles />
-      
+      <FlowImage
+        src="/666-2.webp"
+        speed={0.32}
+        intensity={0.012}
+        scale={1.9}
+        hueShift={0.025}
+        className="pointer-events-none absolute inset-0 h-full w-full rounded-none shadow-none"
+      />
+      <div className="pointer-events-none absolute inset-0 bg-[#050b17]/60 backdrop-blur-[42px]" />
+
       <motion.div
         variants={flyInTop}
         initial="hidden"
