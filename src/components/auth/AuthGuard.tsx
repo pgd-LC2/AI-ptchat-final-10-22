@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import useAuthStore from '@/lib/auth-store';
 import { Loader } from 'lucide-react';
 import NeonCore from '../ui/NeonCore';
-import Particles from '../ui/Particles';
+import FlowImage from '../ui/FlowImage';
 
 interface AuthGuardProps {
   children: React.ReactNode;
@@ -21,7 +21,15 @@ const AuthGuard: React.FC<AuthGuardProps> = ({ children }) => {
   if (isLoading) {
     return (
       <div className="min-h-screen w-screen bg-dark-bg-end flex items-center justify-center relative overflow-hidden">
-        <Particles />
+        <FlowImage
+          src="/666-2.webp"
+          speed={0.3}
+          intensity={0.01}
+          scale={1.8}
+          hueShift={0.02}
+          className="pointer-events-none absolute inset-0 h-full w-full rounded-none shadow-none"
+        />
+        <div className="pointer-events-none absolute inset-0 bg-black/55 backdrop-blur-[40px]" />
         <div className="relative z-10 flex flex-col items-center">
           <NeonCore providerColor="#7C3AED" className="w-16 h-16 mb-6" />
           <div className="flex items-center gap-3">
