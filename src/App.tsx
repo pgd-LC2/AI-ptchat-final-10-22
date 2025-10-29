@@ -16,7 +16,7 @@ import { staggerContainer, slideInFromLeft, slideInFromRight } from './lib/motio
 const ChatApp: React.FC = () => {
   return (
     <main
-      className="h-screen w-screen flex overflow-hidden"
+      className="relative flex h-screen w-screen overflow-hidden"
       style={{ position: 'fixed', top: 0, left: 0, zIndex: 10 }}
     >
       <Particles />
@@ -25,21 +25,30 @@ const ChatApp: React.FC = () => {
         initial="hidden"
         animate="visible"
         exit="exit"
-        className="relative flex w-full h-full"
+        className="relative flex h-full w-full px-4 py-6 sm:px-8 sm:py-10"
         style={{ zIndex: 10 }}
       >
-        <motion.div
-          variants={slideInFromLeft}
-          className="h-full"
+        <div
+          className="pointer-events-none absolute inset-0 rounded-[40px] border border-white/10 bg-white/10 backdrop-blur-3xl shadow-[0_60px_160px_-60px_rgba(8,16,32,0.8)] sm:inset-6"
+          style={{ zIndex: 8 }}
+        />
+        <div
+          className="relative flex h-full w-full overflow-hidden rounded-[28px] border border-white/10 bg-black/40 backdrop-blur-2xl shadow-[0_40px_120px_-50px_rgba(15,23,42,0.85)]"
+          style={{ zIndex: 9 }}
         >
-          <Sidebar />
-        </motion.div>
-        <motion.div
-          variants={slideInFromRight}
-          className="flex-1 h-full"
-        >
-          <ChatView />
-        </motion.div>
+          <motion.div
+            variants={slideInFromLeft}
+            className="h-full"
+          >
+            <Sidebar />
+          </motion.div>
+          <motion.div
+            variants={slideInFromRight}
+            className="flex-1 h-full"
+          >
+            <ChatView />
+          </motion.div>
+        </div>
       </motion.div>
     </main>
   );

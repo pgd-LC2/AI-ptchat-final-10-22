@@ -6,6 +6,8 @@ import { streamResponse, handleStreamResponse } from '@/lib/api';
 import { ChatMessage } from '@/types';
 import { getOpenRouterModelName } from '@/lib/model-mapping';
 
+const DEFAULT_SYSTEM_PROMPT = '永远使用中文交流，除非用户要求使用英文。';
+
 interface ChatState {
   conversations: Record<string, Conversation>;
   activeConversationId: string | null;
@@ -49,6 +51,7 @@ const useChatStore = create<ChatState>()(
           messages: [],
           providerId,
           modelId,
+          systemPrompt: DEFAULT_SYSTEM_PROMPT,
           createdAt: new Date(),
         };
         set((_state) => ({
@@ -200,17 +203,25 @@ const useChatStore = create<ChatState>()(
           }
 
           // 构建消息历史（排除刚添加的助手空消息，保留最后一条用户消息）
-          const chatMessages: ChatMessage[] = currentConversation.messages
+          const conversationMessages = currentConversation.messages
             .filter(msg => {
               // 排除空助手消息，但保留最新的用户消息
               if (msg.role === 'assistant' && msg.content === '') return false;
               return true;
             })
-            .slice(-10) // 只保留最近10条消息
-            .map(msg => ({
-              role: msg.role as 'system' | 'user' | 'assistant',
-              content: msg.content,
-            }));
+            .slice(-10); // 只保留最近10条消息
+
+          const limitedChatMessages: ChatMessage[] = conversationMessages.map(msg => ({
+            role: msg.role as 'system' | 'user' | 'assistant',
+            content: msg.content,
+          }));
+
+          const hasSystemMessage = limitedChatMessages.some(msg => msg.role === 'system');
+          const systemPrompt = currentConversation.systemPrompt?.trim() || DEFAULT_SYSTEM_PROMPT;
+
+          const chatMessages: ChatMessage[] = hasSystemMessage
+            ? limitedChatMessages
+            : [{ role: 'system', content: systemPrompt }, ...limitedChatMessages];
 
           // 获取当前对话的OpenRouter模型名称
           const openRouterModel = getOpenRouterModelName(currentConversation.providerId, currentConversation.modelId);
@@ -319,6 +330,9 @@ const useChatStore = create<ChatState>()(
       onRehydrateStorage: () => (state) => {
         if (state?.conversations) {
           Object.values(state.conversations).forEach(conv => {
+            if (!conv.systemPrompt) {
+              conv.systemPrompt = DEFAULT_SYSTEM_PROMPT;
+            }
             if (typeof conv.createdAt === 'string') {
               conv.createdAt = new Date(conv.createdAt);
             }
