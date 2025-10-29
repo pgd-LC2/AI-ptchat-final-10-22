@@ -108,8 +108,6 @@ export async function streamChatCompletion(
         "google/gemini-2.5-flash",
         "mistral/mistral-large-latest",
         "mistral/mistral-medium-latest",
-        "mistral/mistral-small-latest",
-        "mistralai/mistral-nemo",
         "x-ai/grok-3",
         "x-ai/grok-3-mini",
         "x-ai/grok-4",
