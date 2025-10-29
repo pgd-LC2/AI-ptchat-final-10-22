@@ -1,12 +1,12 @@
 import React, { useRef, useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import { Paperclip, Search, Image, Code, Link as LinkIcon, MoveHorizontal as MoreHorizontal } from 'lucide-react';
+import { Paperclip, Image, Code, Link as LinkIcon, MoveHorizontal as MoreHorizontal } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface AttachmentMenuProps {
   isOpen: boolean;
   onClose: () => void;
-  onSelectOption: (option: 'search' | 'file' | 'image' | 'code' | 'link') => void;
+  onSelectOption: (option: 'file' | 'image' | 'code' | 'link') => void;
   triggerRect?: DOMRect;
   position?: 'top' | 'bottom';
 }
@@ -32,7 +32,6 @@ const AttachmentMenu: React.FC<AttachmentMenuProps> = ({ isOpen, onClose, onSele
 
   const menuOptions = [
     { id: 'file', icon: Paperclip, label: '添加照片和文件', shortcut: 'Ctrl + U' },
-    { id: 'search', icon: Search, label: '深度研究' },
     { id: 'image', icon: Image, label: '创建图片' },
     { id: 'code', icon: Code, label: '代理模式' },
     { id: 'link', icon: LinkIcon, label: '添加源' },

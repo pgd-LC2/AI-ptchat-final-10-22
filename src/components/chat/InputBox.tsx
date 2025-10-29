@@ -2,7 +2,6 @@ import React, { useState, useRef } from 'react';
 import { Send, Plus, X, Loader2 } from 'lucide-react';
 import AttachmentMenu from './AttachmentMenu';
 import useChatStore from '@/lib/store';
-import { performWebSearch, formatSearchResults } from '@/lib/search-service';
 
 interface InputBoxProps {
   providerColor: string;
@@ -19,18 +18,15 @@ const InputBox: React.FC<InputBoxProps> = ({
 }) => {
   const [inputValue, setInputValue] = useState('');
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isSearching, setIsSearching] = useState(false);
-  const [selectedFeature, setSelectedFeature] = useState<'search' | 'file' | 'image' | 'code' | 'link' | null>(null);
+  const [selectedFeature, setSelectedFeature] = useState<'file' | 'image' | 'code' | 'link' | null>(null);
   const plusButtonRef = useRef<HTMLButtonElement>(null);
   const sendMessage = useChatStore((state) => state.sendMessage);
   const isStreaming = useChatStore((state) => state.isStreaming);
 
   const handleSend = async () => {
-    if (!inputValue.trim() || isStreaming || isSearching) return;
+    if (!inputValue.trim() || isStreaming) return;
 
-    if (selectedFeature === 'search') {
-      await handleWebSearch();
-    } else if (onSend) {
+    if (onSend) {
       onSend(inputValue.trim());
     } else {
       await sendMessage(inputValue.trim());
@@ -46,42 +42,10 @@ const InputBox: React.FC<InputBoxProps> = ({
     }
   };
 
-  const handleWebSearch = async () => {
-    if (!inputValue.trim()) return;
-
-    setIsSearching(true);
-
-    try {
-      const searchResult = await performWebSearch({
-        query: inputValue.trim(),
-        limit: 5,
-        scrapeContent: false,
-      });
-
-      if (searchResult.success && searchResult.results) {
-        const formattedResults = formatSearchResults(searchResult.results);
-        const enhancedMessage = `请基于以下搜索结果回答问题：${inputValue.trim()}\n\n${formattedResults}`;
-
-        await sendMessage(enhancedMessage);
-      } else {
-        console.error('搜索失败:', searchResult.error);
-        alert('搜索失败，请稍后重试');
-      }
-    } catch (error) {
-      console.error('搜索错误:', error);
-      alert('搜索出错，请稍后重试');
-    } finally {
-      setIsSearching(false);
-    }
-  };
-
-  const handleMenuOption = (option: 'search' | 'file' | 'image' | 'code' | 'link') => {
+  const handleMenuOption = (option: 'file' | 'image' | 'code' | 'link') => {
     setSelectedFeature(option);
 
     switch (option) {
-      case 'search':
-        // 用户可以继续输入，点击发送时再执行搜索
-        break;
       case 'file':
         console.log('上传文件功能开发中');
         break;
@@ -97,9 +61,8 @@ const InputBox: React.FC<InputBoxProps> = ({
     }
   };
 
-  const getFeatureLabel = (feature: 'search' | 'file' | 'image' | 'code' | 'link') => {
+  const getFeatureLabel = (feature: 'file' | 'image' | 'code' | 'link') => {
     const labels = {
-      search: '研究',
       file: '文件',
       image: '图片',
       code: '代理',
@@ -108,9 +71,8 @@ const InputBox: React.FC<InputBoxProps> = ({
     return labels[feature];
   };
 
-  const getFeatureIcon = (feature: 'search' | 'file' | 'image' | 'code' | 'link') => {
+  const getFeatureIcon = (feature: 'file' | 'image' | 'code' | 'link') => {
     const icons = {
-      search: '🔍',
       file: '📎',
       image: '🖼️',
       code: '💻',
@@ -141,7 +103,7 @@ const InputBox: React.FC<InputBoxProps> = ({
           onClick={() => setIsMenuOpen(!isMenuOpen)}
           className="flex-shrink-0 p-2 ml-1 rounded-full transition-colors hover:bg-white/5"
           title="添加附件"
-          disabled={isSearching || isStreaming}
+          disabled={isStreaming}
         >
           <Plus className="w-5 h-5 text-gray-500" />
         </button>
@@ -158,7 +120,7 @@ const InputBox: React.FC<InputBoxProps> = ({
           onChange={(e) => setInputValue(e.target.value)}
           onKeyDown={handleKeyDown}
           placeholder={placeholder}
-          disabled={isStreaming || isSearching}
+          disabled={isStreaming}
           className="flex-1 bg-transparent text-white placeholder-gray-500 outline-none resize-none pl-1 pr-4 max-h-32"
           rows={1}
           style={{
@@ -175,13 +137,13 @@ const InputBox: React.FC<InputBoxProps> = ({
         />
         <button
           onClick={handleSend}
-          disabled={!inputValue.trim() || isSearching || isStreaming}
+          disabled={!inputValue.trim() || isStreaming}
           className="flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 disabled:opacity-30 disabled:cursor-not-allowed hover:scale-105"
           style={{
-            background: inputValue.trim() && !isSearching && !isStreaming ? providerColor : 'rgba(255, 255, 255, 0.08)',
+            background: inputValue.trim() && !isStreaming ? providerColor : 'rgba(255, 255, 255, 0.08)',
           }}
         >
-          {isSearching || isStreaming ? (
+          {isStreaming ? (
             <Loader2 className="w-5 h-5 text-white animate-spin" />
           ) : (
             <Send className="w-5 h-5 text-white" />
