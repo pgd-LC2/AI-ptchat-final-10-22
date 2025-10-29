@@ -41,9 +41,39 @@ const FlowImage: React.FC<FlowImageProps> = ({
   const texRef = useRef<WebGLTexture | null>(null);
   const progRef = useRef<WebGLProgram | null>(null);
   const startTimeRef = useRef<number>(0);
+  const lastTimeRef = useRef<number>(0);
+  const playRef = useRef<boolean>(play);
+  const readyRef = useRef<boolean>(false);
+  const renderRef = useRef<((now: number) => void) | null>(null);
+  const paramsRef = useRef({ speed, intensity, scale, hueShift });
   const uLocsRef = useRef<Record<string, WebGLUniformLocation | null>>({});
   const bufferRef = useRef<WebGLBuffer | null>(null);
   const imgRef = useRef<HTMLImageElement | null>(null);
+
+  useEffect(() => {
+    paramsRef.current = { speed, intensity, scale, hueShift };
+  }, [speed, intensity, scale, hueShift]);
+
+  useEffect(() => {
+    playRef.current = play;
+    const render = renderRef.current;
+    if (!render) {
+      return;
+    }
+
+    if (play) {
+      startTimeRef.current = performance.now() - lastTimeRef.current * 1000;
+      if (rafRef.current === null) {
+        rafRef.current = requestAnimationFrame(render);
+      }
+    } else {
+      if (rafRef.current !== null) {
+        cancelAnimationFrame(rafRef.current);
+        rafRef.current = null;
+      }
+      render(performance.now());
+    }
+  }, [play]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -67,7 +97,7 @@ const FlowImage: React.FC<FlowImageProps> = ({
       }
     `;
 
-      const fragSrc = `
+    const fragSrc = `
       precision mediump float;
       varying vec2 v_uv;
 
@@ -256,20 +286,69 @@ const FlowImage: React.FC<FlowImageProps> = ({
         placeholder,
       );
 
+      const setUniform1f = (
+        location: WebGLUniformLocation | null | undefined,
+        value: number,
+      ) => {
+        if (location) {
+          gl.uniform1f(location, value);
+        }
+      };
+
+      const setUniform1i = (
+        location: WebGLUniformLocation | null | undefined,
+        value: number,
+      ) => {
+        if (location) {
+          gl.uniform1i(location, value);
+        }
+      };
+
+      const setUniform2f = (
+        location: WebGLUniformLocation | null | undefined,
+        x: number,
+        y: number,
+      ) => {
+        if (location) {
+          gl.uniform2f(location, x, y);
+        }
+      };
+
+      setUniform1i(uLocsRef.current.u_tex, 0);
+      setUniform2f(uLocsRef.current.u_imgResolution, 1, 1);
+
       const img = new Image();
       img.crossOrigin = 'anonymous';
       imgRef.current = img;
       img.onload = () => {
+        if (!progRef.current || texRef.current !== texture) {
+          return;
+        }
+
         gl.bindTexture(gl.TEXTURE_2D, texture);
         gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 0);
         gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, img);
-        gl.useProgram(program);
-        gl.uniform1i(uLocsRef.current.u_tex, 0);
-        gl.uniform2f(uLocsRef.current.u_imgResolution, img.width, img.height);
+
+        const activeProgram = progRef.current;
+        if (!activeProgram) return;
+
+        gl.useProgram(activeProgram);
+        setUniform1i(uLocsRef.current.u_tex, 0);
+        setUniform2f(uLocsRef.current.u_imgResolution, img.width, img.height);
+
+        readyRef.current = true;
+        lastTimeRef.current = 0;
+        startTimeRef.current = performance.now();
+
+        if (!playRef.current && renderRef.current) {
+          renderRef.current(performance.now());
+        }
       };
       img.src = src;
 
+      readyRef.current = false;
       startTimeRef.current = performance.now();
+      lastTimeRef.current = 0;
 
       const resize = () => {
         const dpr = Math.min(window.devicePixelRatio || 1, 2);
@@ -281,8 +360,10 @@ const FlowImage: React.FC<FlowImageProps> = ({
           canvas.height = height;
         }
         gl.viewport(0, 0, canvas.width, canvas.height);
-        gl.useProgram(program);
-        gl.uniform2f(uLocsRef.current.u_resolution, canvas.width, canvas.height);
+        const activeProgram = progRef.current;
+        if (!activeProgram) return;
+        gl.useProgram(activeProgram);
+        setUniform2f(uLocsRef.current.u_resolution, canvas.width, canvas.height);
       };
 
       resize();
@@ -296,24 +377,49 @@ const FlowImage: React.FC<FlowImageProps> = ({
 
       const render = (now: number) => {
         if (!gl) return;
-        if (!play) {
-          rafRef.current = requestAnimationFrame(render);
+
+        const activeProgram = progRef.current;
+        const textureRef = texRef.current;
+        const isReady = readyRef.current;
+        const shouldAnimate = playRef.current;
+
+        if (!activeProgram || !textureRef) {
+          if (shouldAnimate || !isReady) {
+            rafRef.current = requestAnimationFrame(render);
+          } else {
+            rafRef.current = null;
+          }
           return;
         }
 
-        const elapsed = (now - startTimeRef.current) * 0.001;
-        gl.useProgram(program);
-        gl.uniform1f(uLocsRef.current.u_time, elapsed);
-        gl.uniform1f(uLocsRef.current.u_speed, speed);
-        gl.uniform1f(uLocsRef.current.u_intensity, intensity);
-        gl.uniform1f(uLocsRef.current.u_scale, scale);
-        gl.uniform1f(uLocsRef.current.u_hueShift, hueShift);
+        gl.useProgram(activeProgram);
+        gl.activeTexture(gl.TEXTURE0);
+        gl.bindTexture(gl.TEXTURE_2D, textureRef);
+
+        const params = paramsRef.current;
+        let elapsed = lastTimeRef.current;
+
+        if (shouldAnimate) {
+          elapsed = (now - startTimeRef.current) * 0.001;
+          lastTimeRef.current = elapsed;
+        }
+
+        setUniform1f(uLocsRef.current.u_time, elapsed);
+        setUniform1f(uLocsRef.current.u_speed, params.speed);
+        setUniform1f(uLocsRef.current.u_intensity, params.intensity);
+        setUniform1f(uLocsRef.current.u_scale, params.scale);
+        setUniform1f(uLocsRef.current.u_hueShift, params.hueShift);
 
         gl.drawArrays(gl.TRIANGLES, 0, 6);
 
-        rafRef.current = requestAnimationFrame(render);
+        if (shouldAnimate || !isReady) {
+          rafRef.current = requestAnimationFrame(render);
+        } else {
+          rafRef.current = null;
+        }
       };
 
+      renderRef.current = render;
       rafRef.current = requestAnimationFrame(render);
     } catch (error) {
       console.error(error);
@@ -340,17 +446,22 @@ const FlowImage: React.FC<FlowImageProps> = ({
         texRef.current = null;
       }
       if (progRef.current && gl) {
+        gl.useProgram(null);
         gl.deleteProgram(progRef.current);
         progRef.current = null;
       }
+      renderRef.current = null;
+      readyRef.current = false;
+      lastTimeRef.current = 0;
       if (vertexShader) {
         gl.deleteShader(vertexShader);
       }
       if (fragmentShader) {
         gl.deleteShader(fragmentShader);
       }
+      imgRef.current = null;
     };
-  }, [src, speed, intensity, scale, hueShift, play]);
+  }, [src]);
 
   return (
     <div className={cn('relative h-full w-full overflow-hidden', className)}>
