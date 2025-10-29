@@ -109,7 +109,6 @@ export async function streamChatCompletion(
         "mistral/mistral-large-latest",
         "mistral/mistral-medium-latest",
         "x-ai/grok-3",
-        "x-ai/grok-3-mini",
         "x-ai/grok-4",
         "deepseek/deepseek-r1",
         "meta-llama/llama-3.1-70b-instruct",
