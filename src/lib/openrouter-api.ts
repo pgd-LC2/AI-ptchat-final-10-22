@@ -111,7 +111,6 @@ export async function streamChatCompletion(
         "x-ai/grok-3",
         "x-ai/grok-4",
         "deepseek/deepseek-r1",
-        "meta-llama/llama-3.1-405b-instruct",
         "mistralai/mixtral-8x22b-instruct",
         "perplexity/sonar",
         "cohere/command-r-plus",
