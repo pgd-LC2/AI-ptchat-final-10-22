@@ -17,7 +17,7 @@ type FlowImageProps = {
  * Props:
  *  - src: string – image URL
  *  - speed?: number – flow evolution speed (default 0.25)
- *  - intensity?: number – UV displacement strength in pixels (default 0.008)
+ *  - intensity?: number – UV displacement strength in normalized UV units (default 0.008)
  *  - scale?: number – noise scale (default 1.6)
  *  - hueShift?: number – subtle hue rotation strength (0 ~ 0.1, default 0.02)
  *  - play?: boolean – start/stop animation (default true)
@@ -32,7 +32,7 @@ const FlowImage: React.FC<FlowImageProps> = ({
   speed = 0.25,
   intensity = 0.008,
   scale = 1.6,
-  hueShift = 0.02,
+  hueShift = 0,
   play = true,
   className,
 }) => {
@@ -67,7 +67,7 @@ const FlowImage: React.FC<FlowImageProps> = ({
       }
     `;
 
-    const fragSrc = `
+      const fragSrc = `
       precision mediump float;
       varying vec2 v_uv;
 
@@ -157,8 +157,7 @@ const FlowImage: React.FC<FlowImageProps> = ({
         vec2 v1 = curl(p);
         vec2 v2 = curl(p*1.7 + 13.7);
         vec2 vel = normalize(v1 + 0.5*v2 + 1e-5);
-        float px = 1.0 / min(u_resolution.x, u_resolution.y);
-        float amp = u_intensity / max(px, 1e-6);
+        float amp = u_intensity;
         vec2 uv1 = uv + vel * amp * 0.5;
         vec2 uv2 = uv1 + vel * amp * 0.5;
         vec4 col = texture2D(u_tex, uv2);

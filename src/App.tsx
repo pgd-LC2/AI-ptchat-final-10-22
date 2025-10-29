@@ -22,9 +22,9 @@ const ChatApp: React.FC = () => {
       <div className="pointer-events-none absolute inset-0 -z-10">
         <FlowImage
           src="/666-2.webp"
-          speed={0.3}
-          intensity={0.01}
-          scale={1.8}
+          speed={0.28}
+          intensity={0.006}
+          scale={1.85}
           hueShift={0}
           className="absolute inset-0 h-full w-full"
         />
