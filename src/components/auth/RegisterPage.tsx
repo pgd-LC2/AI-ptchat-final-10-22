@@ -5,7 +5,6 @@ import { motion } from 'framer-motion';
 import AuthLayout from './AuthLayout';
 import useAuthStore from '@/lib/auth-store';
 import { cn } from '@/lib/utils';
-import { staggeredContainer, floatUpItem } from '../ui/motion-presets';
 
 const RegisterPage: React.FC = () => {
   const navigate = useNavigate();
@@ -73,20 +72,12 @@ const RegisterPage: React.FC = () => {
       title="创建账户"
       subtitle="加入Orbital Chat，开启AI对话之旅"
     >
-      <motion.form
-        onSubmit={handleSubmit}
-        className="space-y-6"
-        noValidate
-        variants={staggeredContainer(0.1, 0.24)}
-        initial="hidden"
-        animate="show"
-      >
+      <form onSubmit={handleSubmit} className="space-y-6" noValidate>
         {/* 错误提示 */}
         {error && (
           <motion.div
-            variants={floatUpItem}
-            initial="hidden"
-            animate="show"
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
             role="alert"
             aria-live="polite"
             className="flex items-start gap-3 p-4 rounded-xl bg-red-500/8 border border-red-500/15 text-red-400 text-sm leading-relaxed"
@@ -97,7 +88,7 @@ const RegisterPage: React.FC = () => {
         )}
 
         {/* 用户名输入 */}
-        <motion.div variants={floatUpItem} className="space-y-3">
+        <div className="space-y-3">
           <label className="block text-sm font-medium text-gray-200 tracking-wide">
             用户名
           </label>
@@ -120,10 +111,10 @@ const RegisterPage: React.FC = () => {
               disabled={isLoading}
             />
           </div>
-        </motion.div>
+        </div>
 
         {/* 邮箱输入 */}
-        <motion.div variants={floatUpItem} className="space-y-3">
+        <div className="space-y-3">
           <label className="block text-sm font-medium text-gray-200 tracking-wide">
             邮箱地址
           </label>
@@ -147,10 +138,10 @@ const RegisterPage: React.FC = () => {
               disabled={isLoading}
             />
           </div>
-        </motion.div>
+        </div>
 
         {/* 密码输入 */}
-        <motion.div variants={floatUpItem} className="space-y-3">
+        <div className="space-y-3">
           <label className="block text-sm font-medium text-gray-200 tracking-wide">
             密码
           </label>
@@ -186,10 +177,10 @@ const RegisterPage: React.FC = () => {
               {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
             </button>
           </div>
-        </motion.div>
+        </div>
 
         {/* 确认密码输入 */}
-        <motion.div variants={floatUpItem} className="space-y-3">
+        <div className="space-y-3">
           <label className="block text-sm font-medium text-gray-200 tracking-wide">
             确认密码
           </label>
@@ -225,10 +216,10 @@ const RegisterPage: React.FC = () => {
               {showConfirmPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
             </button>
           </div>
-        </motion.div>
+        </div>
 
         {/* 注册按钮 */}
-        <motion.button
+        <button
           type="submit"
           disabled={isLoading || isSuccess || !formData.name || !formData.email || !formData.password || !formData.confirmPassword}
           className={cn(
@@ -241,7 +232,6 @@ const RegisterPage: React.FC = () => {
           )}
           aria-live="polite"
           aria-busy={isLoading}
-          variants={floatUpItem}
         >
           {isSuccess ? (
             <div className="flex items-center justify-center gap-2">
@@ -256,10 +246,10 @@ const RegisterPage: React.FC = () => {
           ) : (
             '注册'
           )}
-        </motion.button>
+        </button>
 
         {/* 登录链接 */}
-        <motion.div variants={floatUpItem} className="text-center text-sm text-gray-400 pt-4">
+        <div className="text-center text-sm text-gray-400 pt-4">
           已有账户？{' '}
           <Link
             to="/login"
@@ -270,8 +260,8 @@ const RegisterPage: React.FC = () => {
           >
             立即登录
           </Link>
-        </motion.div>
-      </motion.form>
+        </div>
+      </form>
     </AuthLayout>
   );
 };

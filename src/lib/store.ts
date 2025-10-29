@@ -5,8 +5,7 @@ import { Message, Conversation, ProviderId, MessageImage } from '@/types';
 import { streamResponse, handleStreamResponse } from '@/lib/api';
 import { ChatMessage } from '@/types';
 import { getOpenRouterModelName } from '@/lib/model-mapping';
-
-const DEFAULT_SYSTEM_PROMPT = '永远使用中文交流，除非用户要求使用英文。';
+import { checkSearchNeed, generateSearchPlan, performSearchPlan, formatSearchResults } from '@/lib/search-service';
 
 interface ChatState {
   conversations: Record<string, Conversation>;
@@ -51,7 +50,6 @@ const useChatStore = create<ChatState>()(
           messages: [],
           providerId,
           modelId,
-          systemPrompt: DEFAULT_SYSTEM_PROMPT,
           createdAt: new Date(),
         };
         set((_state) => ({
@@ -195,6 +193,39 @@ const useChatStore = create<ChatState>()(
         };
         addMessage(conversationId, assistantMessage);
 
+        // 检查是否需要搜索
+        const conversation = get().conversations[conversationId];
+        if (!conversation) {
+          setStreaming(false);
+          return;
+        }
+
+        const conversationHistory = conversation.messages
+          .slice(-5)
+          .map(msg => ({
+            role: msg.role,
+            content: msg.content,
+          }));
+
+        const searchCheck = await checkSearchNeed(content, conversationHistory);
+        console.log('🔍 搜索判断:', searchCheck);
+
+        let searchContext = '';
+        let searchResults: any[] = [];
+        if (searchCheck.needsSearch) {
+          // 让 Gemini Flash 根据 Firecrawl API 文档自动生成最优搜索策略
+          const searchPlan = await generateSearchPlan(content, conversationHistory);
+          console.log('🔍 生成的搜索计划:', searchPlan);
+
+          // 执行搜索计划
+          searchResults = await performSearchPlan(searchPlan);
+
+          if (searchResults.length > 0) {
+            searchContext = formatSearchResults(searchResults);
+            console.log('🔍 搜索完成，共', searchResults.length, '条结果');
+          }
+        }
+
         try {
           // 获取当前对话的消息历史，转换为 ChatMessage 格式
           const currentConversation = get().conversations[conversationId];
@@ -203,26 +234,47 @@ const useChatStore = create<ChatState>()(
           }
 
           // 构建消息历史（排除刚添加的助手空消息，保留最后一条用户消息）
-          const conversationMessages = currentConversation.messages
+          const chatMessages: ChatMessage[] = currentConversation.messages
             .filter(msg => {
               // 排除空助手消息，但保留最新的用户消息
               if (msg.role === 'assistant' && msg.content === '') return false;
               return true;
             })
-            .slice(-10); // 只保留最近10条消息
+            .slice(-10) // 只保留最近10条消息
+            .map(msg => ({
+              role: msg.role as 'system' | 'user' | 'assistant',
+              content: msg.content,
+            }));
 
-          const limitedChatMessages: ChatMessage[] = conversationMessages.map(msg => ({
-            role: msg.role as 'system' | 'user' | 'assistant',
-            content: msg.content,
-          }));
+          // 如果有搜索结果，添加到系统消息
+          if (searchContext) {
+            const urlList = searchResults.map((r, i) => `[${i + 1}] ${r.url}`).join('\n');
+            const example1 = searchResults[0]?.url || '#';
+            const example2 = searchResults[1]?.url || '#';
+            const example3 = searchResults[2]?.url || '#';
 
-          const hasSystemMessage = limitedChatMessages.some(msg => msg.role === 'system');
-          const systemPrompt = currentConversation.systemPrompt?.trim() || DEFAULT_SYSTEM_PROMPT;
+            chatMessages.unshift({
+              role: 'system',
+              content: `以下是最新的网络搜索结果，请基于这些信息回答用户的问题：
 
-          const chatMessages: ChatMessage[] = hasSystemMessage
-            ? limitedChatMessages
-            : [{ role: 'system', content: systemPrompt }, ...limitedChatMessages];
+${searchContext}
 
+重要：当你引用搜索结果中的信息时，必须使用 Markdown 链接格式来标注信息来源。格式为：` + '[[数字]](URL)' + `
+
+搜索结果的URL列表：
+${urlList}
+
+引用示例：
+- "根据最新报道` + `[[1]](${example1})` + `，该事件发生在..."
+- "研究表明` + `[[2]](${example2})[[3]](${example3})` + `，这种方法可以..."
+
+注意：
+1. 必须使用 ` + '[[数字]](URL)' + ` 格式，不要使用普通的 [数字]
+2. URL 必须从上面的列表中选择对应的链接
+3. 可以连续使用多个引用，如 ` + '[[1]](url1)[[2]](url2)',
+            });
+          }
+          
           // 获取当前对话的OpenRouter模型名称
           const openRouterModel = getOpenRouterModelName(currentConversation.providerId, currentConversation.modelId);
           
@@ -330,9 +382,6 @@ const useChatStore = create<ChatState>()(
       onRehydrateStorage: () => (state) => {
         if (state?.conversations) {
           Object.values(state.conversations).forEach(conv => {
-            if (!conv.systemPrompt) {
-              conv.systemPrompt = DEFAULT_SYSTEM_PROMPT;
-            }
             if (typeof conv.createdAt === 'string') {
               conv.createdAt = new Date(conv.createdAt);
             }
