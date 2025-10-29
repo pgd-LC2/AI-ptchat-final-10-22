@@ -34,11 +34,11 @@ const ChatApp: React.FC = () => {
         initial="hidden"
         animate="visible"
         exit="exit"
-        className="relative flex h-full w-full px-4 py-6 sm:px-8 sm:py-10"
+        className="relative flex h-full w-full"
         style={{ zIndex: 10 }}
       >
         <div
-          className="pointer-events-none absolute inset-0 rounded-[40px] border border-white/10 bg-white/10 backdrop-blur-3xl shadow-[0_60px_160px_-60px_rgba(8,16,32,0.8)] sm:inset-6"
+          className="pointer-events-none absolute inset-0 rounded-[40px] border border-white/10 bg-white/10 backdrop-blur-3xl shadow-[0_60px_160px_-60px_rgba(8,16,32,0.8)]"
           style={{ zIndex: 8 }}
         />
         <div
